@@ -1,0 +1,106 @@
+{
+  "name": "portfolio",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "22",
+      "pnpmVersion": "latest"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "github.copilot-chat",
+        "github.vscode-github-actions",
+        "mhutchie.git-graph",
+        "vscode-icons-team.vscode-icons",
+        "oderwat.indent-rainbow",
+        "christian-kohler.path-intellisense",
+        "shardulm94.trailing-spaces",
+        "streetsidesoftware.code-spell-checker",
+        "usernamehw.errorlens",
+        "ms-azuretools.vscode-docker",
+        "hashicorp.terraform",
+        "tamasfe.even-better-toml",
+        "hediet.vscode-drawio",
+        "redhat.vscode-yaml",
+        "charliermarsh.ruff",
+        "ms-python.python",
+        "esbenp.prettier-vscode",
+        "davidanson.vscode-markdownlint",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        // 保存時の自動整形を有効化
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+          "source.fixAll": "always",
+          "source.organizeImports": "always"
+        },
+        "errorLens.excludeBySource": ["cSpell"],
+        "cSpell.words": [
+          "mkdocs",
+          "melyuh",
+          "astral",
+          "pnpm",
+          "venv",
+          "ruff",
+          "devcontainer",
+          "terraform"
+        ],
+        // 言語ごとのフォーマッター指定
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        },
+        // Markdownのフォーマッターは引き続きPrettier（美しさ担当）
+        "[markdown]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.formatOnSave": true,
+          "editor.wordWrap": "on",
+          "editor.quickSuggestions": {
+            "comments": "sep",
+            "strings": "sep",
+            "other": "on"
+          }
+        },
+        // markdownlintのルールを一部調整（Prettierとの競合回避）
+        "markdownlint.config": {
+          "MD013": false, // 行の長さ制限（Prettierに任せるため）
+          "MD033": false // HTMLの許可（MkDocsでアドモニション等を使うため）
+        },
+        "[json]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[jsonc]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[html]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[javascript]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[css]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        },
+        "[terraform]": {
+          "editor.defaultFormatter": "hashicorp.terraform"
+        }
+      }
+    }
+  },
+  "remoteUser": "vscode"
+}
