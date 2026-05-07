@@ -1,0 +1,7 @@
+# Copy this file to terraform.tfvars and fill in the values.
+# S3 bucket names must be globally unique across all AWS accounts.
+
+aws_region        = "ap-northeast-1"
+project_name      = "portfolio"
+state_bucket_name = "your-unique-bucket-name-terraform-state"
+lock_table_name   = "terraform-state-lock"

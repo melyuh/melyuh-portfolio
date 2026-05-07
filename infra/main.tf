@@ -1,4 +1,14 @@
 terraform {
+  required_version = ">= 1.5.0"
+
+  backend "s3" {
+    bucket         = "melyuh-portfolio-tfstate"
+    key            = "infra/terraform.tfstate"
+    region         = "ap-northeast-1"
+    dynamodb_table = "melyuh-portfolio-tflock"
+    encrypt        = true
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -11,8 +21,8 @@ provider "aws" {
   region = "ap-northeast-1"
 }
 
-resource "aws_s3_bucket" "my_portfolio_bucket" {
-  bucket = "melyuh-portfolio"
+resource "aws_s3_bucket" "web" {
+  bucket = "melyuh-portfolio-web"
 }
 
 # ---------------------------------------------
@@ -33,8 +43,8 @@ resource "aws_cloudfront_origin_access_control" "oac" {
 # ---------------------------------------------
 resource "aws_cloudfront_distribution" "cdn" {
   origin {
-    domain_name              = aws_s3_bucket.my_portfolio_bucket.bucket_regional_domain_name
-    origin_id                = aws_s3_bucket.my_portfolio_bucket.id
+    domain_name              = aws_s3_bucket.web.bucket_regional_domain_name
+    origin_id                = aws_s3_bucket.web.id
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
@@ -45,7 +55,7 @@ resource "aws_cloudfront_distribution" "cdn" {
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = aws_s3_bucket.my_portfolio_bucket.id
+    target_origin_id = aws_s3_bucket.web.id
 
     # AWSが用意しているキャッシュ最適化の標準ポリシーを使用
     cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6"
@@ -69,7 +79,7 @@ resource "aws_cloudfront_distribution" "cdn" {
 # 「上で作ったCloudFrontからのアクセスだけを許可する」というルールをS3に適用します
 # ---------------------------------------------
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = aws_s3_bucket.my_portfolio_bucket.id
+  bucket = aws_s3_bucket.web.id
   policy = data.aws_iam_policy_document.s3_policy.json
 }
 
@@ -80,7 +90,7 @@ data "aws_iam_policy_document" "s3_policy" {
       identifiers = ["cloudfront.amazonaws.com"]
     }
     actions   = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.my_portfolio_bucket.arn}/*"]
+    resources = ["${aws_s3_bucket.web.arn}/*"]
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceArn"
