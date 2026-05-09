@@ -2,7 +2,7 @@
 
 ## Memory
 
-At the end of every conversation, write important context (decisions made, work done, user preferences) to the memory system at `/home/vscode/.claude/projects/-workspaces-portfolio/memory/`. This ensures continuity across devcontainer rebuilds and new sessions.
+At each natural break in work (task completed, topic changes, before rebuilds), write important context (decisions made, work done, user preferences) to the memory system at `/home/vscode/.claude/projects/-workspaces-portfolio/memory/`. This ensures continuity across devcontainer rebuilds and new sessions.
 
 ## Project Overview
 

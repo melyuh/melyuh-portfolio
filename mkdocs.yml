@@ -1,0 +1,147 @@
+site_name: Melyuh's Portfolio
+
+use_directory_urls: false
+
+theme:
+  font: false
+  name: material
+  language: ja
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+  custom_dir: overrides
+  features:
+    - content.code.copy
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.suggest
+  palette:
+    - scheme: slate
+      primary: custom
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: ライトモードに切替
+    - scheme: default
+      primary: custom
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: ダークモードに切替
+
+extra_css:
+  - stylesheets/extra.css
+  - stylesheets/pdf_font.css
+  - stylesheets/glightbox.min.css
+
+extra_javascript:
+  - javascripts/mermaid.min.js
+  - javascripts/glightbox.min.js
+
+markdown_extensions:
+  # --- 基本 ---
+  - tables
+  - footnotes
+  - abbr
+  - def_list
+  - attr_list
+  - md_in_html
+
+  # --- 目次 ---
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+  # --- 注意書き・折りたたみ ---
+  - admonition
+  - pymdownx.details
+
+  # --- コードブロック ---
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.snippets
+
+  # --- テキスト装飾 ---
+  - pymdownx.mark
+  - pymdownx.caret
+  - pymdownx.tilde
+  - pymdownx.keys
+  - pymdownx.critic
+  - pymdownx.smartsymbols:
+      fractions: false
+
+  # --- タブ・チェックリスト ---
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+  # --- リンク・アイコン ---
+  - pymdownx.magiclink
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+hooks:
+  - hooks/build_config.py
+
+watch:
+  - docs
+  - hooks
+  - overrides
+  - mkdocs.yml
+
+plugins:
+  # --- 常に有効（軽量） ---
+  - search:
+      lang: ja
+  - awesome-pages
+  - table-reader:
+      enabled: true
+  - glightbox
+
+  # --- serve 時は無効化（重い） ---
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: date
+      locale: ja
+      enabled: !ENV [ENABLE_GIT_INFO, false]
+  - git-authors:
+      show_contribution: true
+      show_line_count: false
+      count_empty_lines: false
+      enabled: !ENV [ENABLE_GIT_INFO, false]
+
+  # --- build 時のみ（環境変数で制御） ---
+  - mermaid-to-svg:
+      enabled: !ENV [RENDER_SVG, false]
+      output_dir: images
+      image_id_enabled: true
+      image_id_prefix: mermaid-diagram
+      mermaid_config:
+        flowchart:
+          htmlLabels: false
+        class:
+          htmlLabels: false
+  - svg-to-png:
+      enabled: !ENV [RENDER_PNG, false]
+      output_dir: images
+  - to-pdf:
+      enabled: !ENV [ENABLE_PDF, false]
+      cover_logo: assets/logo.png
+      toc_title: 目次
+      toc_level: 2
+  - minify:
+      enabled: !ENV [ENABLE_MINIFY, false]
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      htmlmin_opts:
+        remove_comments: true
+        remove_empty_space: true

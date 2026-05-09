@@ -1,0 +1,15 @@
+/* PDF 用フォント — Windows 標準フォントのみ使用 */
+@media print {
+    body,
+    article,
+    .md-typeset,
+    h1, h2, h3, h4, h5, h6,
+    p, li, dt, dd,
+    td, th {
+        font-family: "Meiryo", "Yu Gothic", sans-serif !important;
+    }
+
+    code, pre, .highlight {
+        font-family: "Consolas", "Meiryo", monospace !important;
+    }
+}
