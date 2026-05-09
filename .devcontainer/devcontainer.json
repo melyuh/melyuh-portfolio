@@ -106,5 +106,11 @@
       }
     }
   },
+  "postCreateCommand": "sudo chown -R vscode /usr/local/share/nvm",
+  "postStartCommand": {
+    "update-claude-code": "npm install -g @anthropic-ai/claude-code@latest --silent",
+    "update-pnpm": "npm install -g pnpm@latest --silent",
+    "update-uv": "uv self update"
+  },
   "remoteUser": "vscode"
 }
