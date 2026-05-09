@@ -110,7 +110,11 @@
   "postStartCommand": {
     "update-claude-code": "npm install -g @anthropic-ai/claude-code@latest --silent",
     "update-pnpm": "npm install -g pnpm@latest --silent",
-    "update-uv": "uv self update"
+    "update-uv": "curl -LsSf https://astral.sh/uv/install.sh | sudo env UV_INSTALL_DIR=/bin sh"
   },
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached,readonly",
+    "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached"
+  ]
 }

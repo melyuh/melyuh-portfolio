@@ -29,11 +29,11 @@ output "backend_config" {
     # Add this block to your Terraform configuration:
     terraform {
       backend "s3" {
-        bucket         = "${aws_s3_bucket.terraform_state.id}"
-        key            = "<module-name>/terraform.tfstate"
-        region         = "${aws_s3_bucket.terraform_state.region}"
-        dynamodb_table = "${aws_dynamodb_table.terraform_state_lock.name}"
-        encrypt        = true
+        bucket       = "${aws_s3_bucket.terraform_state.id}"
+        key          = "<module-name>/terraform.tfstate"
+        region       = "${aws_s3_bucket.terraform_state.region}"
+        use_lockfile = true
+        encrypt      = true
       }
     }
   EOT
