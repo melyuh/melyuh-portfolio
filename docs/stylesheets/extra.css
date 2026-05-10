@@ -61,12 +61,11 @@
     --md-docomo-red: #CC0033;
 }
 
-/* ライトモード */
-[data-md-color-scheme="default"] {
-    --md-default-h-color: #263238;
-}
+/* --md-default-h-color は hooks/build_config.py で primary から自動生成 */
 
-/* ダークモードの見出し色は hooks/build_config.py の CUSTOM_COLOR から自動生成 */
+/* ロゴ: ライト/ダーク切り替え */
+[data-md-color-scheme="default"] .md-logo img.logo-dark { display: none; }
+[data-md-color-scheme="slate"]   .md-logo img.logo-light { display: none; }
 
 .md-grid {
     max-width: 1600px;  /* デフォルトより広く */
@@ -91,6 +90,12 @@
         width: 15rem !important;
         max-width: none !important;
     }
+}
+
+/* ハンバーガーメニュー（モバイルドロワー）のロゴ背景をデフォルト背景色に統一 */
+.md-nav--primary .md-nav__title[for="__drawer"] {
+    background-color: var(--md-default-bg-color);
+    color: var(--md-default-fg-color);
 }
 
 .md-header {

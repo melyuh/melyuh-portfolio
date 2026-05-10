@@ -6,8 +6,8 @@ theme:
   font: false
   name: material
   language: ja
-  logo: assets/logo.png
-  favicon: assets/favicon.png
+  logo: assets/melyuh_darkmode.png
+  favicon: assets/melyuh_favicon.png
   custom_dir: overrides
   features:
     - content.code.copy
@@ -17,14 +17,14 @@ theme:
     - search.suggest
   palette:
     - scheme: slate
-      primary: custom
-      accent: light blue
+      primary: "#26C6DA"
+      accent: "#26C6DA"
       toggle:
         icon: material/brightness-4
         name: ライトモードに切替
     - scheme: default
-      primary: custom
-      accent: light blue
+      primary: "#00838F"
+      accent: "#00838F"
       toggle:
         icon: material/brightness-7
         name: ダークモードに切替
@@ -134,7 +134,7 @@ plugins:
       output_dir: images
   - to-pdf:
       enabled: !ENV [ENABLE_PDF, false]
-      cover_logo: assets/logo.png
+      cover_logo: assets/melyuh_darkmode.png
       toc_title: 目次
       toc_level: 2
   - minify:
