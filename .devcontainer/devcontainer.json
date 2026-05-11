@@ -106,7 +106,7 @@
       }
     }
   },
-  "postCreateCommand": "sudo chown -R vscode /usr/local/share/nvm",
+  "postCreateCommand": "sudo chown -R vscode /usr/local/share/nvm && sudo chown -R vscode /home/vscode/.config/gh",
   "postStartCommand": {
     "update-claude-code": "npm install -g @anthropic-ai/claude-code@latest --silent",
     "update-pnpm": "npm install -g pnpm@latest --silent",
@@ -115,6 +115,7 @@
   "remoteUser": "vscode",
   "mounts": [
     "source=${localEnv:HOME}/.aws,target=/home/vscode/.aws,type=bind,consistency=cached,readonly",
-    "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached"
+    "source=${localEnv:HOME}/.claude,target=/home/vscode/.claude,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.config/gh,target=/home/vscode/.config/gh,type=bind,consistency=cached"
   ]
 }
