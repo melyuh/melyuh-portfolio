@@ -134,9 +134,9 @@ plugins:
       output_dir: images
   - to-pdf:
       enabled: !ENV [ENABLE_PDF, false]
-      cover_logo: assets/melyuh_darkmode.png
       toc_title: 目次
       toc_level: 2
+      # cover_logo は hooks/build_config.py が PDF_SCHEME に応じて動的に設定
   - minify:
       enabled: !ENV [ENABLE_MINIFY, false]
       minify_html: true
