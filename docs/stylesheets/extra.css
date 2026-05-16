@@ -71,6 +71,14 @@
   display: none;
 }
 
+/* mermaid 図: ライト/ダークモード切り替え */
+[data-md-color-scheme="slate"] .mermaid-default {
+  display: none;
+}
+[data-md-color-scheme="default"] .mermaid-slate {
+  display: none;
+}
+
 .md-grid {
   max-width: 1600px; /* デフォルトより広く */
 }
