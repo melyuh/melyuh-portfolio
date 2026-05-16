@@ -31,7 +31,7 @@ theme:
 
 extra_css:
   - stylesheets/extra.css
-  - stylesheets/pdf_font.css
+  - stylesheets/pdf.css
   - stylesheets/glightbox.min.css
 
 extra_javascript:

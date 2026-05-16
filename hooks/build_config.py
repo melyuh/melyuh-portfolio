@@ -6,7 +6,8 @@ MkDocs hook: ビルド時の自動設定
 3. Copyright に西暦を自動付与
 4. to-pdf プラグインの出力パス・カバーロゴ・copyright 設定
 5. PDF 内 git プラグインアイコンの fill をインラインスタイルで直接適用
-6. ライト/ダーク両スキームの PDF を生成し、viewer でスキームに応じて切り替え
+6. PDF 内の画像リンク href を除去してクリック不可にする（pre_pdf_render フック）
+7. ライト/ダーク両スキームの PDF を生成し、viewer でスキームに応じて切り替え
 """
 
 import logging
@@ -631,7 +632,9 @@ def on_config(config):
             pdf_plugin._options._cover_logo = cover_logo
             # dual PDF 生成用: WeasyPrint に渡す HTML を保存しておく
             pdf_plugin._options.html_path = "_pdf_source.html"
-            log.info("to-pdf: _copyright, _cover_logo, html_path updated directly")
+            # PDF 内の画像リンクを除去するフックを差し込む（EventHookHandler の公式機構をバイパス）
+            pdf_plugin._options.hook.pre_pdf_render = _pre_pdf_render
+            log.info("to-pdf: _copyright, _cover_logo, html_path, pre_pdf_render updated")
 
             _generate_pdf_styles(
                 pdf_plugin._options.custom_template_path,
@@ -682,6 +685,22 @@ def on_post_page(output, page, config):
     return output
 
 
+def _pre_pdf_render(html_string: str) -> str:
+    """WeasyPrint レンダリング直前に画像リンクの href を除去してクリック不可にする。
+
+    to-pdf の EventHookHandler.pre_pdf_render をインスタンス属性で上書きして差し込む。
+    このタイミングは replace_asset_hrefs 適用後かつ WeasyPrint 呼び出し前なので
+    pdf-article の BeautifulSoup 構造に干渉しない。
+    html_path への保存もこのフック後なので _pdf_source.html にも反映される。
+    """
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html_string, "html.parser")
+    for a in soup.find_all("a", href=True):
+        if a.find("img"):
+            del a["href"]
+    return str(soup)
+
+
 def _fix_source_file_icon_fill(article, fill_color: str):
     """md-source-file__fact 内の SVG アイコンに fill をインラインスタイルで直接設定する。
 
@@ -695,6 +714,7 @@ def _fix_source_file_icon_fill(article, fill_color: str):
                 _set_fill_style(svg, fill_color)
                 for path in svg.find_all("path"):
                     _set_fill_style(path, fill_color)
+
 
 
 def _set_fill_style(tag, fill_color: str):
@@ -1013,6 +1033,8 @@ def _generate_both_pdfs(config):
                 backup.unlink()
         saved_html.unlink(missing_ok=True)
 
+    # 元の *.pdf は不要（*_default.pdf / *_slate.pdf のみ保持）
+    orig_pdf.unlink(missing_ok=True)
     log.info(f"Dual PDFs ready: {primary_pdf.name}, {alt_pdf.name}")
 
 

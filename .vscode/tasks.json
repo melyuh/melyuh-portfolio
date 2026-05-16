@@ -19,42 +19,15 @@
     },
 
     {
-      "label": "melyuh-portfolio: Mkdocs Build (default)",
+      "label": "melyuh-portfolio: Mkdocs Build & Serve",
       "type": "shell",
-      "command": "ENABLE_GIT_INFO=true RENDER_SVG=true RENDER_PNG=true ENABLE_PDF=true PDF_SCHEME=default ENABLE_MINIFY=true uv run mkdocs build",
+      "command": "ENABLE_GIT_INFO=true RENDER_SVG=true RENDER_PNG=true ENABLE_PDF=true ENABLE_MINIFY=true uv run mkdocs build && uv run python -m http.server 8001 --directory site",
       "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "dedicated",
         "clear": true
       },
-      "problemMatcher": []
-    },
-
-    {
-      "label": "melyuh-portfolio: Mkdocs Build (slate)",
-      "type": "shell",
-      "command": "ENABLE_GIT_INFO=true RENDER_SVG=true RENDER_PNG=true ENABLE_PDF=true PDF_SCHEME=slate ENABLE_MINIFY=true uv run mkdocs build",
-      "group": "build",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      },
-      "problemMatcher": []
-    },
-
-    {
-      "label": "melyuh-portfolio: Mkdocs Serve Built Site",
-      "type": "shell",
-      "command": "uv run python -m http.server 8001 --directory site",
-      "group": "build",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      },
-      "isBackground": true,
       "problemMatcher": []
     },
 
