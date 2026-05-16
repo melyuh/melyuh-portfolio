@@ -79,6 +79,16 @@
   display: none;
 }
 
+/* テーマ切替後の Mermaid 再描画要素: code 要素の inline 装飾を除去
+   vertical-align:baseline によるディセンダー余白が下部に着色帯として見えるのを防ぐ */
+.md-typeset code[data-mermaid-rerender] {
+  display: block;
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+  border-radius: 0;
+}
+
 .md-grid {
   max-width: 1600px; /* デフォルトより広く */
 }

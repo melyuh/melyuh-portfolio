@@ -19,6 +19,7 @@ node_modules/
 # MkDocs
 site/
 *_palette.css
+docs/javascripts/_mermaid_config.js
 docs/images/*_mermaid_*.png
 docs/images/*_mermaid_*.svg
 
