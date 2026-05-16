@@ -21,7 +21,7 @@
     {
       "label": "melyuh-portfolio: Mkdocs Build & Serve",
       "type": "shell",
-      "command": "ENABLE_GIT_INFO=true RENDER_SVG=true RENDER_PNG=true ENABLE_PDF=true ENABLE_MINIFY=true uv run mkdocs build && uv run python -m http.server 8001 --directory site",
+      "command": "RENDER_SVG=true RENDER_PNG=true ENABLE_PDF=true ENABLE_MINIFY=true ENABLE_GIT_INFO=true ENABLE_SOCIAL=true uv run mkdocs build && uv run python -m http.server 8001 --directory site",
       "group": "build",
       "presentation": {
         "reveal": "always",

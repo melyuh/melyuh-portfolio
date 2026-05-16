@@ -114,6 +114,27 @@
   }
 }
 
+/* ナビゲーションタブ: ヘッダーと同じ背景色・primary 色でテキスト */
+.md-tabs {
+  background-color: var(--md-default-bg-color);
+  color: var(--md-default-fg-color); /* Material のデフォルト --md-primary-bg-color 継承を防ぐ */
+}
+
+.md-tabs__link {
+  color: var(--md-default-fg-color) !important;
+  opacity: 0.7;
+}
+
+.md-tabs__link:hover,
+.md-tabs__link--active {
+  color: var(--md-primary-fg-color) !important;
+  opacity: 1;
+}
+
+.md-tabs__indicator {
+  background-color: var(--md-primary-fg-color);
+}
+
 /* ハンバーガーメニュー（モバイルドロワー）のロゴ背景をデフォルト背景色に統一 */
 .md-nav--primary .md-nav__title[for="__drawer"] {
   background-color: var(--md-default-bg-color);

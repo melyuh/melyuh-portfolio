@@ -255,7 +255,7 @@ def _make_custom_palette(color):
 
 
 # ──────────────────────────────────────────────
-#  1. パレット CSS（PDF 用 — JS 非実行でも色を適用）
+#  1. パレット CSS（ブラウザ変数 + PDF print 用）
 # ──────────────────────────────────────────────
 def _build_palette_css(schemes, pdf_scheme="default"):
     """schemes: list of (scheme_name, primary_palette, accent_palette)
@@ -340,7 +340,6 @@ def _build_palette_css(schemes, pdf_scheme="default"):
     --md-default-h-color:              {h_color};
     --md-typeset-color:                {fg};
     --md-typeset-a-color:              {p_primary["main"]};
-    --md-docomo-red:                   #CC0033;
   }}
   /* @page でページ全域（マージン含む）の背景色を指定。
      CSS 変数は @page 内で解決されない場合があるため実値を直接記述する。 */

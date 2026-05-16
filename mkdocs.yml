@@ -1,21 +1,35 @@
 site_name: Melyuh's Portfolio
+# site_url: https://your-cloudfront-domain.cloudfront.net  # TODO: 実際のURLに変更
 copyright: "Melyuh. All rights reserved." #「Copyright (C) YYYY」が冒頭に付与される
 
 use_directory_urls: false
 
 theme:
-  font: false
+  font:
+    text: Noto Sans JP   # 本文・見出し（Google Fonts）
+    code: JetBrains Mono # コードブロック（Google Fonts）
   name: material
   language: ja
   # logo は overrides/partials/logo.html で動的に切り替え
   favicon: assets/melyuh_favicon.png
   custom_dir: overrides
   features:
-    - content.code.copy
-    - navigation.top
-    - navigation.tracking
-    - search.highlight
-    - search.suggest
+    # Navigation
+    - navigation.instant          # インスタントローディング
+    - navigation.instant.prefetch # プリフェッチ機能
+    - navigation.tabs             # タブナビゲーション
+    - navigation.tabs.sticky      # スティッキータブ
+    - navigation.sections         # セクション表示
+    - navigation.expand           # 自動展開
+    - navigation.path             # パンくずリスト
+    - navigation.top              # トップに戻るボタン
+    # Search
+    - search.highlight            # 検索ハイライト
+    - search.suggest              # 検索サジェスト
+    # Content
+    - content.code.copy           # コードコピーボタン
+    - content.code.select         # コード選択機能
+    - content.tooltips            # ツールチップ
   palette:
     - scheme: slate
       primary: "#26C6DA"
@@ -107,6 +121,14 @@ plugins:
   - table-reader:
       enabled: true
   - glightbox
+
+  # --- build 時のみ有効（ソーシャルカード生成） ---
+  - social:
+      enabled: !ENV [ENABLE_SOCIAL, false]
+      cards_layout_options:
+        background_color: "#00838F"   # ライトモードのprimary色
+        color: "#ffffff"
+        font_family: Noto Sans JP      # Google Fonts 上の名称
 
   # --- serve 時は無効化（重い） ---
   - git-revision-date-localized:

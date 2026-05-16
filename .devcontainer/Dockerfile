@@ -29,4 +29,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libasound2 \
     libx11-xcb1 \
     fonts-noto-cjk \
+    fonts-jetbrains-mono \
     && rm -rf /var/lib/apt/lists/*

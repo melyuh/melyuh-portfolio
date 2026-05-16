@@ -21,13 +21,13 @@
   dd,
   td,
   th {
-    font-family: "Meiryo", "Yu Gothic", sans-serif !important;
+    font-family: "Noto Sans CJK JP", sans-serif !important;
   }
 
   code,
   pre,
   .highlight {
-    font-family: "Consolas", "Meiryo", monospace !important;
+    font-family: "JetBrains Mono", "Noto Sans Mono CJK JP", monospace !important;
   }
 
   /*
