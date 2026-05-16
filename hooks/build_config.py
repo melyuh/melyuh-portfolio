@@ -361,7 +361,7 @@ def _build_palette_css(schemes, pdf_scheme="default"):
 def _build_mermaid_theme_variables(accent):
     """accent カラーのみで Mermaid の配色を構築"""
     return {
-        "background": "#ffffff",
+        "background": "transparent",
         "titleColor": "#1a1a1a",
         "primaryColor": accent["vlight"],
         "primaryTextColor": _text_on(accent["vlight"]),
@@ -601,6 +601,10 @@ def on_post_page(output, page, config):
         icon_fill = "rgba(255,255,255,0.54)" if pdf_scheme == "slate" else "rgba(0,0,0,0.54)"
         _fix_source_file_icon_fill(pdf_article, icon_fill)
 
+    # to-pdf の on_post_build（PDF レンダリング）より先に mermaid PNG を透明化する。
+    # on_post_build では既に PDF 生成済みのため、ここで処理する必要がある。
+    _fix_mermaid_pngs_for_page(output, page, config)
+
     return output
 
 
@@ -627,9 +631,116 @@ def _set_fill_style(tag, fill_color: str):
     tag["style"] = "; ".join(p.strip() for p in parts) + ";"
 
 
+def _fix_mermaid_svgs(site_dir):
+    """on_post_build 用: mermaid SVG の background-color を transparent に修正する。
+
+    PNG の透明化は on_post_page 内の _fix_mermaid_pngs_for_page で処理済みのため、
+    ここでは SVG ファイル自体の修正のみ行う（直接 SVG を参照する場合の対策）。
+    """
+    import re
+    from pathlib import Path
+
+    images_dir = Path(site_dir) / "images"
+    if not images_dir.exists():
+        return
+
+    for svg_path in images_dir.glob("*_mermaid_*.svg"):
+        text = svg_path.read_text(encoding="utf-8")
+        fixed = re.sub(r"background-color\s*:\s*white\b", "background-color: transparent", text)
+        if fixed != text:
+            svg_path.write_text(fixed, encoding="utf-8")
+            log.info(f"mermaid SVG background fixed: {svg_path.name}")
+
+
+def _fix_mermaid_pngs_for_page(output, page, config):
+    """on_post_page 用: ページ内の mermaid PNG を透明背景で再生成する。
+
+    to-pdf は on_post_page で HTML を収集し on_post_build で PDF を生成する。
+    on_post_page 内で PNG ファイルを透明化しておくことで、WeasyPrint が PDF を
+    レンダリングする時点では透明背景の PNG が存在するようになる。
+    """
+    import re
+    from pathlib import Path
+
+    # minify プラグインが先に実行されるため、属性値の引用符が省略されている場合がある
+    # 例: src="images/foo.png" → src=images/foo.png
+    png_srcs = re.findall(
+        r'src=["\']?([^"\'>\s]*_mermaid_[^"\'>\s]*\.png)["\']?', output
+    )
+    if not png_srcs:
+        return
+
+    site_dir = Path(config["site_dir"])
+    page_dir = (site_dir / page.file.dest_path).parent
+
+    png_paths = set()
+    for src in png_srcs:
+        png_path = (site_dir / src.lstrip("/")) if src.startswith("/") else (page_dir / src).resolve()
+        if png_path.exists() and png_path.with_suffix(".svg").exists():
+            png_paths.add(png_path)
+
+    if not png_paths:
+        return
+
+    # SVG の background-color: white を transparent に置換
+    for png_path in png_paths:
+        svg_path = png_path.with_suffix(".svg")
+        text = svg_path.read_text(encoding="utf-8")
+        fixed = re.sub(r"background-color\s*:\s*white\b", "background-color: transparent", text)
+        if fixed != text:
+            svg_path.write_text(fixed, encoding="utf-8")
+            log.info(f"mermaid SVG background fixed: {svg_path.name}")
+
+    # Playwright で透明背景 PNG を再生成
+    # MkDocs が asyncio ループを使用しているため、sync API は別スレッドで実行する
+    errors = []
+
+    def _render_pngs():
+        try:
+            from playwright.sync_api import sync_playwright
+
+            with sync_playwright() as p:
+                browser = p.chromium.launch()
+                for png_path in png_paths:
+                    svg_content = png_path.with_suffix(".svg").read_text(encoding="utf-8")
+
+                    m = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', svg_content)
+                    vw = int(float(m.group(1))) + 20 if m else 800
+                    vh = int(float(m.group(2))) + 20 if m else 600
+
+                    html = (
+                        f'<html style="background:transparent;margin:0">'
+                        f'<body style="margin:0;background:transparent">'
+                        f'{svg_content}</body></html>'
+                    )
+                    pw_page = browser.new_page(viewport={"width": vw, "height": vh})
+                    pw_page.set_content(html)
+                    bbox = pw_page.locator("svg").bounding_box()
+                    pw_page.screenshot(
+                        path=str(png_path),
+                        clip=bbox if bbox else None,
+                        full_page=bbox is None,
+                        omit_background=True,
+                    )
+                    pw_page.close()
+                    log.info(f"mermaid PNG re-rendered (transparent): {png_path.name}")
+                browser.close()
+        except Exception as e:
+            errors.append(str(e))
+
+    import threading
+    t = threading.Thread(target=_render_pngs)
+    t.start()
+    t.join(timeout=120)
+    if errors:
+        log.warning(f"mermaid PNG re-render skipped: {errors[0]}")
+
+
 def on_post_build(config):
     """PDF viewer HTML を生成（iframe で直接表示）"""
     from urllib.parse import quote
+
+    _fix_mermaid_svgs(config["site_dir"])
 
     try:
         site_name = config.get("site_name", "docs")
