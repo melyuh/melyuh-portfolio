@@ -1,50 +1,61 @@
 /* PDF 用フォント — Windows 標準フォントのみ使用 */
 @media print {
-    /* WeasyPrint に背景色・枠線色の印刷を許可 */
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-    }
+  /* WeasyPrint に背景色・枠線色の印刷を許可 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
-    body,
-    article,
-    .md-typeset,
-    h1, h2, h3, h4, h5, h6,
-    p, li, dt, dd,
-    td, th {
-        font-family: "Meiryo", "Yu Gothic", sans-serif !important;
-    }
+  body,
+  article,
+  .md-typeset,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  li,
+  dt,
+  dd,
+  td,
+  th {
+    font-family: "Meiryo", "Yu Gothic", sans-serif !important;
+  }
 
-    code, pre, .highlight {
-        font-family: "Consolas", "Meiryo", monospace !important;
-    }
+  code,
+  pre,
+  .highlight {
+    font-family: "Consolas", "Meiryo", monospace !important;
+  }
 
-    /*
+  /*
      * to-pdf プラグイン (_heading.scss / _paging.scss) のハードコード色を上書き。
      * プラグインの <style> は extra_css の <link> より後に <head> へ追記されるため、
      * !important を付けることでカスケードを逆転させる。
      */
 
-    /* _paging.scss: body { background-color: #fff } を無効化 */
-    body {
-        background:       var(--md-default-bg-color) !important;
-        background-color: var(--md-default-bg-color) !important;
-        color:            var(--md-default-fg-color) !important;
-    }
+  /* _paging.scss: body { background-color: #fff } を無効化 */
+  body {
+    background: var(--md-default-bg-color) !important;
+    background-color: var(--md-default-bg-color) !important;
+    color: var(--md-default-fg-color) !important;
+  }
 
-    /* _heading.scss: article h1 { border-bottom: 2px solid #f00 } を primary 色に差し替え */
-    article h1 {
-        border-bottom: 4px solid var(--md-primary-fg-color) !important;
-    }
+  /* _heading.scss: article h1 { border-bottom: 2px solid #f00 } を primary 色に差し替え */
+  article h1 {
+    border-bottom: 4px solid var(--md-primary-fg-color) !important;
+  }
 
-    /* _heading.scss: article h2 { border-bottom: 1px solid #f99 } を除去
+  /* _heading.scss: article h2 { border-bottom: 1px solid #f99 } を除去
        (extra.css の border-left スタイルはそのまま残す) */
-    article h2 {
-        border-bottom: none !important;
-    }
+  article h2 {
+    border-bottom: none !important;
+  }
 
-    /* _heading.scss: article h3 { border-bottom: 0.5px solid #eee } も除去 */
-    article h3 {
-        border-bottom: none !important;
-    }
+  /* _heading.scss: article h3 { border-bottom: 0.5px solid #eee } も除去 */
+  article h3 {
+    border-bottom: none !important;
+  }
 }

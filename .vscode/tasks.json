@@ -1,0 +1,93 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // ========================================
+    //  MkDocs
+    // ========================================
+    {
+      "label": "melyuh-portfolio: Mkdocs Serve",
+      "type": "shell",
+      "command": "uv run mkdocs serve --livereload",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+
+    {
+      "label": "melyuh-portfolio: Mkdocs Build (default)",
+      "type": "shell",
+      "command": "ENABLE_GIT_INFO=true RENDER_SVG=true RENDER_PNG=true ENABLE_PDF=true PDF_SCHEME=default ENABLE_MINIFY=true uv run mkdocs build",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+
+    {
+      "label": "melyuh-portfolio: Mkdocs Build (slate)",
+      "type": "shell",
+      "command": "ENABLE_GIT_INFO=true RENDER_SVG=true RENDER_PNG=true ENABLE_PDF=true PDF_SCHEME=slate ENABLE_MINIFY=true uv run mkdocs build",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+
+    {
+      "label": "melyuh-portfolio: Mkdocs Serve Built Site",
+      "type": "shell",
+      "command": "uv run python -m http.server 8001 --directory site",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "isBackground": true,
+      "problemMatcher": []
+    },
+
+    // ========================================
+    //  リント・整形
+    // ========================================
+    {
+      "label": "melyuh-portfolio: Lint Markdown",
+      "type": "shell",
+      "command": "pnpm lint",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+
+    // ========================================
+    //  セットアップ
+    // ========================================
+    {
+      "label": "melyuh-portfolio: Setup",
+      "type": "shell",
+      "command": "bash .devcontainer/setup.sh",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

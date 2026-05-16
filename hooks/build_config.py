@@ -6,7 +6,7 @@ MkDocs hook: ビルド時の自動設定
 3. Copyright に西暦を自動付与
 4. to-pdf プラグインの出力パス・カバーロゴ・copyright 設定
 5. PDF 内 git プラグインアイコンの fill をインラインスタイルで直接適用
-6. PDF リンクをブラウザ内表示に変更
+6. PDF viewer HTML を生成し、PDF アイコンのリンクを viewer に変更
 
 環境変数:
   PDF_SCHEME  PDF に適用するカラースキーム ("default" または "slate"、デフォルト: "default")
@@ -628,10 +628,13 @@ def _set_fill_style(tag, fill_color: str):
 
 
 def on_post_build(config):
-    """PDF viewer HTML を生成（blob URL で確実にブラウザ内表示）"""
+    """PDF viewer HTML を生成（iframe で直接表示）"""
+    from urllib.parse import quote
+
     try:
         site_name = config.get("site_name", "docs")
         pdf_file = f"{site_name}.pdf"
+        pdf_url = quote(pdf_file)
         site_dir = config["site_dir"]
 
         viewer_html = f"""<!DOCTYPE html>
@@ -642,29 +645,10 @@ def on_post_build(config):
 <style>
 html, body {{ margin:0; padding:0; height:100%; overflow:hidden; }}
 iframe {{ width:100%; height:100%; border:none; }}
-#loading {{
-    display:flex; justify-content:center; align-items:center;
-    height:100%; font-family:sans-serif; color:#666; font-size:1.2em;
-}}
 </style>
 </head>
 <body>
-<div id="loading">PDF を読み込み中...</div>
-<iframe id="pdf" style="display:none"></iframe>
-<script>
-fetch("{pdf_file}")
-  .then(function(r) {{ return r.blob(); }})
-  .then(function(blob) {{
-    var url = URL.createObjectURL(new Blob([blob], {{type:"application/pdf"}}));
-    var iframe = document.getElementById("pdf");
-    iframe.src = url;
-    iframe.style.display = "block";
-    document.getElementById("loading").style.display = "none";
-  }})
-  .catch(function() {{
-    document.getElementById("loading").textContent = "PDF の読み込みに失敗しました";
-  }});
-</script>
+<iframe src="{pdf_url}"></iframe>
 </body>
 </html>"""
 

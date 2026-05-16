@@ -55,134 +55,137 @@
 */
 
 :root {
-    /* サイドバーの幅を広げて項目の折り返しを防止 */
-    --md-sidebar-width: 15rem;  /* デフォルト 12.1rem から拡大 */
+  /* サイドバーの幅を広げて項目の折り返しを防止 */
+  --md-sidebar-width: 15rem; /* デフォルト 12.1rem から拡大 */
 
-    --md-docomo-red: #CC0033;
+  --md-bold-red: #cc0033;
 }
 
 /* --md-default-h-color は hooks/build_config.py で primary から自動生成 */
 
 /* ロゴ: ライト/ダーク切り替え */
-[data-md-color-scheme="default"] .md-logo img.logo-dark { display: none; }
-[data-md-color-scheme="slate"]   .md-logo img.logo-light { display: none; }
+[data-md-color-scheme="default"] .md-logo img.logo-dark {
+  display: none;
+}
+[data-md-color-scheme="slate"] .md-logo img.logo-light {
+  display: none;
+}
 
 .md-grid {
-    max-width: 1600px;  /* デフォルトより広く */
+  max-width: 1600px; /* デフォルトより広く */
 }
 
 /* サイドバー幅を直接指定（カスタムプロパティが効かない場合の対策） */
 @media screen and (min-width: 76.25em) {
-    .md-sidebar--primary {
-        width: 15rem !important;
-    }
-    .md-sidebar--primary .md-sidebar__scrollwrap {
-        width: 15rem !important;
-    }
-    /* ナビゲーション要素の幅も広げる */
-    .md-sidebar--primary .md-sidebar__inner {
-        width: 15rem !important;
-    }
-    .md-sidebar--primary .md-nav--primary,
-    .md-sidebar--primary .md-nav--primary .md-nav,
-    .md-sidebar--primary .md-nav__title,
-    .md-sidebar--primary .md-nav__list {
-        width: 15rem !important;
-        max-width: none !important;
-    }
+  .md-sidebar--primary {
+    width: 15rem !important;
+  }
+  .md-sidebar--primary .md-sidebar__scrollwrap {
+    width: 15rem !important;
+  }
+  /* ナビゲーション要素の幅も広げる */
+  .md-sidebar--primary .md-sidebar__inner {
+    width: 15rem !important;
+  }
+  .md-sidebar--primary .md-nav--primary,
+  .md-sidebar--primary .md-nav--primary .md-nav,
+  .md-sidebar--primary .md-nav__title,
+  .md-sidebar--primary .md-nav__list {
+    width: 15rem !important;
+    max-width: none !important;
+  }
 }
 
 /* ハンバーガーメニュー（モバイルドロワー）のロゴ背景をデフォルト背景色に統一 */
 .md-nav--primary .md-nav__title[for="__drawer"] {
-    background-color: var(--md-default-bg-color);
-    color: var(--md-default-fg-color);
+  background-color: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
 }
 
 .md-header {
-    background-color: var(--md-default-bg-color);
-    color: var(--md-default-fg-color);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* ヘッダー内のリンク・アイコンも文字色に合わせる */
 .md-header a,
 .md-header .md-icon {
-    color: var(--md-default-fg-color);
+  color: var(--md-default-fg-color);
 }
 
 /* 検索バーの色も調整 */
 .md-search__input {
-    background-color: var(--md-default-bg-color--light);
-    color: var(--md-default-fg-color);
+  background-color: var(--md-default-bg-color--light);
+  color: var(--md-default-fg-color);
 }
 
 /* 検索バーのプレースホルダー（「検索」の文字） */
 .md-search__input::placeholder {
-    color: rgba(0, 0, 0, 0.4);
+  color: rgba(0, 0, 0, 0.4);
 }
 
 /* ダークモード時 */
 [data-md-color-scheme="slate"] .md-search__input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
-
 .md-typeset h1 {
-    color: var(--md-default-h-color);
-    font-size: 2.5em;
-    font-weight: bold;
-    border-bottom: 4px solid var(--md-primary-fg-color);
-    padding-bottom: 0.3em;
-    margin-bottom: 1em;
-    position: relative;
+  color: var(--md-default-h-color);
+  font-size: 2.5em;
+  font-weight: bold;
+  border-bottom: 4px solid var(--md-primary-fg-color);
+  padding-bottom: 0.3em;
+  margin-bottom: 1em;
+  position: relative;
 }
 
 .md-typeset h2 {
-    background-color: var(--md-accent-fg-color--transparent);
-    color: var(--md-default-h-color);
-    font-weight: bold;
-    border-left: 10px solid var(--md-primary-fg-color);
-    padding-top: 0.4em;
-    padding-left: 0.7em;
-    padding-bottom: 0.4em;
-    margin-bottom: 1em;
-    position: relative;
+  background-color: var(--md-accent-fg-color--transparent);
+  color: var(--md-default-h-color);
+  font-weight: bold;
+  border-left: 10px solid var(--md-primary-fg-color);
+  padding-top: 0.4em;
+  padding-left: 0.7em;
+  padding-bottom: 0.4em;
+  margin-bottom: 1em;
+  position: relative;
 }
 
 .md-typeset h3 {
-    color: var(--md-default-h-color);
-    font-weight: bold;
-    border-left: 7px solid var(--md-primary-fg-color);
-    padding-top: 0.3em;
-    padding-left: 0.5em;
-    padding-bottom: 0.3em;
-    margin-bottom: 1em;
+  color: var(--md-default-h-color);
+  font-weight: bold;
+  border-left: 7px solid var(--md-primary-fg-color);
+  padding-top: 0.3em;
+  padding-left: 0.5em;
+  padding-bottom: 0.3em;
+  margin-bottom: 1em;
 }
 
 .md-typeset h4 {
-    color: var(--md-default-h-color);
-    font-weight: bold;
-    border-left: 4px solid var(--md-primary-fg-color--light);
-    padding-top: 0.2em;
-    padding-left: 0.5em;
-    padding-bottom: 0.2em;
-    margin-bottom: 0.7em;
+  color: var(--md-default-h-color);
+  font-weight: bold;
+  border-left: 4px solid var(--md-primary-fg-color--light);
+  padding-top: 0.2em;
+  padding-left: 0.5em;
+  padding-bottom: 0.2em;
+  margin-bottom: 0.7em;
 }
 
-/* すべての太字テキスト（strong, b）をドコモレッドに */
+/* すべての太字テキスト（strong, b）を赤色に */
 .md-typeset strong,
 .md-typeset b {
-    color: var(--md-docomo-red); /* ドコモレッド */
-    font-weight: bold;
+  color: var(--md-bold-red);
+  font-weight: bold;
 }
 
 @media print {
-    img,
-    svg {
-        max-width: 100%;
-        max-height: 230mm; /* A4 用紙余白込みで収まる高さに調整 */
-        height: auto;
-    }
+  img,
+  svg {
+    max-width: 100%;
+    max-height: 230mm; /* A4 用紙余白込みで収まる高さに調整 */
+    height: auto;
+  }
 }
 
 /* ===================================================
@@ -191,54 +194,54 @@
 
 /* ラッパー */
 .md-typeset__scrollwrap {
-    width: 100%;
+  width: 100%;
 }
 
 .md-typeset__table {
-    width: 100%;
+  width: 100%;
 }
 
 /* テーブル全体: 横幅いっぱい + 枠なし */
 .md-typeset table:not([class]) {
-    width: 100%;
-    border: none;
-    border-collapse: collapse;
-    display: table;
+  width: 100%;
+  border: none;
+  border-collapse: collapse;
+  display: table;
 }
 
 /* ヘッダー: 下線のみ */
 .md-typeset table:not([class]) th {
-    background: none;
-    color: var(--md-default-h-color);
-    font-weight: bold;
-    border: none;
-    border-bottom: 2px solid var(--md-primary-fg-color);
-    padding: 0.6em 1em;
-    text-align: left;
+  background: none;
+  color: var(--md-default-h-color);
+  font-weight: bold;
+  border: none;
+  border-bottom: 2px solid var(--md-primary-fg-color);
+  padding: 0.6em 1em;
+  text-align: left;
 }
 
 /* セル: 枠なし */
 .md-typeset table:not([class]) td {
-    border: none;
-    padding: 0.6em 1em;
+  border: none;
+  padding: 0.6em 1em;
 }
 
 /* 行の区切り: 薄い下線 */
 .md-typeset table:not([class]) tr {
-    border-bottom: 1px solid var(--md-default-fg-color--lightest);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
 }
 
 /* 最終行の下線を消す */
 .md-typeset table:not([class]) tbody tr:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 /* ストライプ（偶数行に薄い背景） */
 .md-typeset table:not([class]) tbody tr:nth-child(even) {
-    background-color: var(--md-default-bg-color--light);
+  background-color: var(--md-default-bg-color--light);
 }
 
 /* ホバー時のハイライト */
 .md-typeset table:not([class]) tbody tr:hover {
-    background-color: var(--md-accent-fg-color--transparent);
+  background-color: var(--md-accent-fg-color--transparent);
 }

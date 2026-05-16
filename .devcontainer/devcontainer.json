@@ -63,7 +63,8 @@
           "venv",
           "ruff",
           "devcontainer",
-          "terraform"
+          "terraform",
+          "!ENV"
         ],
         // 言語ごとのフォーマッター指定
         "[python]": {
