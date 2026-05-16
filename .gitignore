@@ -19,6 +19,8 @@ node_modules/
 # MkDocs
 site/
 *_palette.css
+docs/images/*_mermaid_*.png
+docs/images/*_mermaid_*.svg
 
 # claude
 *.claude
