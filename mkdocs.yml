@@ -1,4 +1,5 @@
 site_name: Melyuh's Portfolio
+copyright: "Melyuh. All rights reserved." #「Copyright (C) YYYY」が冒頭に付与される
 
 use_directory_urls: false
 
