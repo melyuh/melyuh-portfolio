@@ -473,11 +473,11 @@ def _build_mermaid_theme_variables_dark(accent):
 # ──────────────────────────────────────────────
 #  3. PDF カスタムスタイル（custom_template_path/styles.scss）
 #     to-pdf は report-print.scss → cover.scss → styles.scss の順でコンパイルし
-#     最後に <style> として追記するため、!important なしで他の CSS より優先される。
+#     最後に <style> として追記する。doc-toc の h1 は _toc.scss が
+#     specificity(0,1,2) で色を固定しているため !important で上書きする。
 #
 #     SVG アイコンの fill は WeasyPrint で CSS カスケードが効かないため、
 #     on_post_page フックで BeautifulSoup 要素に直接 style= 属性を設定する。
-#     ここでは git プラグインのテキスト color のみを補完する。
 # ──────────────────────────────────────────────
 def _generate_pdf_styles(template_dir: str, pdf_scheme: str):
     """PDF スキームに合わせたテキスト色を styles.scss に出力する"""
@@ -634,9 +634,6 @@ def on_config(config):
             pdf_plugin._options._cover_logo = cover_logo
             log.info("to-pdf: _copyright and _cover_logo updated directly")
 
-            # custom_template_path/styles.scss を動的生成。
-            # to-pdf はこのファイルを最後にコンパイル・追記するため、
-            # !important なしで他の CSS より優先される。
             _generate_pdf_styles(
                 pdf_plugin._options.custom_template_path,
                 pdf_scheme,
@@ -675,8 +672,7 @@ def on_post_page(output, page, config):
     # 継承が機能しないため、要素に style= を直接付与してインラインスタイルで上書きする。
     pdf_article = getattr(page, "pdf-article", None)
     if pdf_article is not None:
-        pdf_scheme = os.environ.get("PDF_SCHEME", "default")
-        icon_fill = "rgba(255,255,255,0.54)" if pdf_scheme == "slate" else "rgba(0,0,0,0.54)"
+        icon_fill = "rgba(255,255,255,0.54)" if _pdf_scheme_global == "slate" else "rgba(0,0,0,0.54)"
         _fix_source_file_icon_fill(pdf_article, icon_fill)
 
     # mermaid PNG をライト/ダーク両モードで生成し HTML を差し替える。
@@ -799,32 +795,23 @@ def _replace_mermaid_in_html(html: str, orig_src: str, default_src: str, slate_s
 
     escaped = re.escape(orig_src)
 
+    def wrap(m):
+        block = m.group(0)
+        return (
+            f'<span class="mermaid-default">{block.replace(orig_src, default_src)}</span>'
+            f'<span class="mermaid-slate">{block.replace(orig_src, slate_src)}</span>'
+        )
+
     a_pattern = (
         r'<a\s[^>]*?' + escaped + r'[^>]*?>'
         r'<img\s[^>]*?' + escaped + r'[^>]*?>'
         r'</a>'
     )
-
-    def wrap_a(m):
-        block = m.group(0)
-        return (
-            f'<span class="mermaid-default">{block.replace(orig_src, default_src)}</span>'
-            f'<span class="mermaid-slate">{block.replace(orig_src, slate_src)}</span>'
-        )
-
-    result = re.sub(a_pattern, wrap_a, html)
+    result = re.sub(a_pattern, wrap, html)
     if result != html:
         return result
 
-    # <a> ラッパーなし fallback
-    def wrap_img(m):
-        block = m.group(0)
-        return (
-            f'<span class="mermaid-default">{block.replace(orig_src, default_src)}</span>'
-            f'<span class="mermaid-slate">{block.replace(orig_src, slate_src)}</span>'
-        )
-
-    return re.sub(r'<img\s[^>]*?' + escaped + r'[^>]*?>', wrap_img, html)
+    return re.sub(r'<img\s[^>]*?' + escaped + r'[^>]*?>', wrap, html)
 
 
 def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
