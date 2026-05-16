@@ -37,6 +37,7 @@ extra_css:
 extra_javascript:
   - javascripts/mermaid.min.js
   - javascripts/glightbox.min.js
+  - javascripts/pdf_scheme.js
 
 markdown_extensions:
   # --- 基本 ---

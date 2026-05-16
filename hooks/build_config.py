@@ -6,10 +6,7 @@ MkDocs hook: ビルド時の自動設定
 3. Copyright に西暦を自動付与
 4. to-pdf プラグインの出力パス・カバーロゴ・copyright 設定
 5. PDF 内 git プラグインアイコンの fill をインラインスタイルで直接適用
-6. PDF viewer HTML を生成し、PDF アイコンのリンクを viewer に変更
-
-環境変数:
-  PDF_SCHEME  PDF に適用するカラースキーム ("default" または "slate"、デフォルト: "default")
+6. ライト/ダーク両スキームの PDF を生成し、viewer でスキームに応じて切り替え
 """
 
 import logging
@@ -17,9 +14,10 @@ import os
 
 log = logging.getLogger("mkdocs.hooks.build_config")
 
-# on_config で設定し、on_post_page で参照するモジュールレベル変数
+# on_config で設定し、on_post_page / on_post_build で参照するモジュールレベル変数
 _mermaid_dark_config: dict = {}
 _pdf_scheme_global: str = "default"
+_schemes_global: list = []  # (scheme_name, primary_palette, accent_palette) のリスト
 
 MATERIAL_COLORS = {
     "red": {
@@ -549,16 +547,15 @@ def on_config(config):
     # mermaid には最初のエントリの accent を使用
     first_accent = schemes[0][2] if schemes else DEFAULT_COLOR
 
-    # PDF カラースキームを環境変数から取得（未設定または不正値は "default" にフォールバック）
-    pdf_scheme = os.environ.get("PDF_SCHEME", "default")
-    if pdf_scheme not in ("default", "slate"):
-        log.warning(f"PDF_SCHEME={pdf_scheme!r} は無効です。'default' を使用します。")
-        pdf_scheme = "default"
-    log.info(f"PDF scheme: {pdf_scheme}")
+    # to-pdf の "主" スキームは palette の先頭エントリから決定する
+    # 両スキームとも on_post_build で生成するため環境変数による切り替えは不要
+    pdf_scheme = schemes[0][0] if schemes else "default"
+    log.info(f"PDF primary scheme: {pdf_scheme}")
 
-    # モジュールレベル変数を更新（on_post_page で参照）
-    global _mermaid_dark_config, _pdf_scheme_global
+    # モジュールレベル変数を更新（on_post_page / on_post_build で参照）
+    global _mermaid_dark_config, _pdf_scheme_global, _schemes_global
     _pdf_scheme_global = pdf_scheme
+    _schemes_global = schemes
     _mermaid_dark_config = {
         "theme": "base",
         "themeVariables": _build_mermaid_theme_variables_dark(first_accent),
@@ -632,7 +629,9 @@ def on_config(config):
         if hasattr(pdf_plugin, "_options") and pdf_plugin._options is not None:
             pdf_plugin._options._copyright = config["copyright"]
             pdf_plugin._options._cover_logo = cover_logo
-            log.info("to-pdf: _copyright and _cover_logo updated directly")
+            # dual PDF 生成用: WeasyPrint に渡す HTML を保存しておく
+            pdf_plugin._options.html_path = "_pdf_source.html"
+            log.info("to-pdf: _copyright, _cover_logo, html_path updated directly")
 
             _generate_pdf_styles(
                 pdf_plugin._options.custom_template_path,
@@ -929,17 +928,106 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
     return modified
 
 
+def _generate_both_pdfs(config):
+    """to-pdf が生成した PDF を primary_scheme 版として保存し、
+    alternate scheme 版を WeasyPrint で追加生成する。
+    両スキームの PDF が site/ に _default.pdf / _slate.pdf として出力される。
+    """
+    import re
+    import shutil
+    from pathlib import Path
+
+    site_dir = Path(config["site_dir"])
+    site_name = config.get("site_name", "docs")
+    primary = _pdf_scheme_global
+    alt = "slate" if primary == "default" else "default"
+
+    orig_pdf = site_dir / f"{site_name}.pdf"
+    if not orig_pdf.exists():
+        log.debug("PDF not found; skipping dual PDF generation")
+        return
+
+    primary_pdf = site_dir / f"{site_name}_{primary}.pdf"
+    alt_pdf = site_dir / f"{site_name}_{alt}.pdf"
+    shutil.copy2(orig_pdf, primary_pdf)
+
+    # html_path で保存した HTML を読み込む
+    saved_html = site_dir / "_pdf_source.html"
+    if not saved_html.exists():
+        log.warning("Saved HTML not found; alternate PDF will not be generated")
+        return
+
+    html = saved_html.read_text(encoding="utf-8")
+
+    try:
+        pdf_plugin = config.get("plugins", {})["to-pdf"]
+    except KeyError:
+        return
+
+    template_dir = pdf_plugin._options.custom_template_path
+    palette_path = site_dir / "stylesheets" / "_palette.css"
+    orig_palette = palette_path.read_text(encoding="utf-8") if palette_path.exists() else ""
+
+    # 代替スキームの print CSS（styles.scss を含む）を生成
+    _generate_pdf_styles(template_dir, alt)
+    from mkdocs_to_pdf.styles import style_for_print
+    alt_print_css = style_for_print(pdf_plugin._options)
+
+    # HTML 内の style_for_print ブロック（string-set: を含む）を差し替え
+    def swap_print_style(m):
+        return f'{m.group(1)}{alt_print_css}{m.group(3)}' if "string-set:" in m.group(2) else m.group(0)
+    alt_html = re.sub(r"(<style[^>]*>)(.*?)(</style>)", swap_print_style, html, flags=re.DOTALL)
+
+    # カバーロゴを代替スキーム用に差し替え
+    orig_logo = _PDF_LOGO_CONFIG[primary]["cover_logo"]
+    alt_logo = _PDF_LOGO_CONFIG[alt]["cover_logo"]
+    alt_html = alt_html.replace(orig_logo, alt_logo)
+
+    # mermaid PNG を代替スキーム用に一時差し替え
+    images_dir = site_dir / "images"
+    png_backups: list = []
+    if images_dir.exists():
+        for default_png in images_dir.glob("*_mermaid_*_default.png"):
+            stem = default_png.stem[: -len("_default")]
+            orig_png = images_dir / f"{stem}.png"
+            slate_png = images_dir / f"{stem}_slate.png"
+            if orig_png.exists() and slate_png.exists():
+                backup = images_dir / f"{stem}.png.bak"
+                shutil.copy2(orig_png, backup)
+                shutil.copy2(slate_png if alt == "slate" else default_png, orig_png)
+                png_backups.append((orig_png, backup))
+
+    try:
+        palette_path.write_text(_build_palette_css(_schemes_global, alt), encoding="utf-8")
+        import weasyprint
+        weasyprint.HTML(string=alt_html).write_pdf(str(alt_pdf))
+        log.info(f"Alternate PDF ({alt}) generated: {alt_pdf.name}")
+    except Exception as e:
+        log.error(f"Alternate PDF generation failed: {e}")
+    finally:
+        palette_path.write_text(orig_palette, encoding="utf-8")
+        _generate_pdf_styles(template_dir, primary)
+        for orig_png, backup in png_backups:
+            if backup.exists():
+                shutil.copy2(backup, orig_png)
+                backup.unlink()
+        saved_html.unlink(missing_ok=True)
+
+    log.info(f"Dual PDFs ready: {primary_pdf.name}, {alt_pdf.name}")
+
+
 def on_post_build(config):
-    """PDF viewer HTML を生成（iframe で直接表示）"""
+    """PDF viewer HTML を生成（iframe で直接表示）し、両スキームの PDF を生成する"""
     from urllib.parse import quote
 
     _fix_mermaid_svgs(config["site_dir"])
+    _generate_both_pdfs(config)
 
     try:
         site_name = config.get("site_name", "docs")
-        pdf_file = f"{site_name}.pdf"
-        pdf_url = quote(pdf_file)
         site_dir = config["site_dir"]
+        default_url = quote(f"{site_name}_default.pdf")
+        slate_url = quote(f"{site_name}_slate.pdf")
 
         viewer_html = f"""<!DOCTYPE html>
 <html lang="ja">
@@ -952,7 +1040,14 @@ iframe {{ width:100%; height:100%; border:none; }}
 </style>
 </head>
 <body>
-<iframe src="{pdf_url}"></iframe>
+<iframe id="pdf-frame" src=""></iframe>
+<script>
+(function () {{
+  var pdfs = {{ default: '{default_url}', slate: '{slate_url}' }};
+  var scheme = new URLSearchParams(location.search).get('scheme') || 'default';
+  document.getElementById('pdf-frame').src = pdfs[scheme] || pdfs['default'];
+}})();
+</script>
 </body>
 </html>"""
 
