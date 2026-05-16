@@ -1,3 +1,20 @@
 {
-  "remote.autoForwardPortsFallback": 0
+  "remote.autoForwardPortsFallback": 0,
+
+  // 編集不要なファイル・フォルダをエクスプローラーから非表示
+  "files.exclude": {
+    "node_modules/": true,
+    ".pnpm-store/": true,
+    "site/": true,
+    ".venv/": true,
+    "**/__pycache__/": true,
+    "**/*.pyc": true
+  },
+
+  // 関連ファイルを親ファイルの下に折りたたむ
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "pyproject.toml": "uv.lock",
+    "package.json": "pnpm-lock.yaml, .prettierrc.json, .markdownlint.json, .pre-commit-config.yaml"
+  }
 }

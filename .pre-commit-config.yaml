@@ -1,0 +1,13 @@
+repos:
+  - repo: local
+    hooks:
+      - id: markdownlint
+        name: markdownlint-cli2
+        language: system
+        entry: pnpm exec markdownlint-cli2 --fix
+        types: [markdown]
+      - id: prettier
+        name: prettier
+        language: system
+        entry: pnpm exec prettier --write
+        types: [markdown]

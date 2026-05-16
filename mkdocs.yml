@@ -6,7 +6,7 @@ theme:
   font: false
   name: material
   language: ja
-  logo: assets/melyuh_darkmode.png
+  # logo は overrides/partials/logo.html で動的に切り替え
   favicon: assets/melyuh_favicon.png
   custom_dir: overrides
   features:

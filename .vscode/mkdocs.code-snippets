@@ -1,0 +1,397 @@
+{
+    // ========================================
+    //  テキスト装飾
+    // ========================================
+    "ハイライト": {
+        "prefix": ["mk-highlight", "ハイライト"],
+        "scope": "markdown",
+        "body": ["==${1:テキスト}==$0"],
+        "description": "テキストのハイライト (==text==)"
+    },
+    "取り消し線": {
+        "prefix": ["mk-strikethrough", "取り消し"],
+        "scope": "markdown",
+        "body": ["~~${1:テキスト}~~$0"],
+        "description": "取り消し線 (~~text~~)"
+    },
+    "下線": {
+        "prefix": ["mk-underline", "下線"],
+        "scope": "markdown",
+        "body": ["^^${1:テキスト}^^$0"],
+        "description": "下線 (^^text^^)"
+    },
+    "キーボードキー": {
+        "prefix": ["mk-key", "キー"],
+        "scope": "markdown",
+        "body": ["++${1|ctrl,shift,alt,enter,tab,esc|}+${2:key}++$0"],
+        "description": "キーボードショートカット (++ctrl+s++)"
+    },
+
+    // ========================================
+    //  リスト
+    // ========================================
+    "チェックリスト": {
+        "prefix": ["mk-checklist", "チェック"],
+        "scope": "markdown",
+        "body": [
+            "- [ ] ${1:項目1}",
+            "- [ ] ${2:項目2}",
+            "- [ ] ${3:項目3}$0"
+        ],
+        "description": "チェックリスト (- [ ])"
+    },
+    "定義リスト": {
+        "prefix": ["mk-def", "定義"],
+        "scope": "markdown",
+        "body": [
+            "${1:用語}",
+            ":   ${2:説明}",
+            "",
+            "${3:用語}",
+            ":   ${4:説明}$0"
+        ],
+        "description": "定義リスト"
+    },
+    "略語定義": {
+        "prefix": ["mk-abbr", "略語"],
+        "scope": "markdown",
+        "body": ["*[${1:略語}]: ${2:正式名称}$0"],
+        "description": "略語のツールチップ定義"
+    },
+    "脚注": {
+        "prefix": ["mk-footnote", "脚注"],
+        "scope": "markdown",
+        "body": [
+            "${1:テキスト}[^${2:1}]",
+            "",
+            "[^${2:1}]: ${3:脚注の内容}$0"
+        ],
+        "description": "脚注（マーカーと定義を同時展開）"
+    },
+    "水平線": {
+        "prefix": ["mk-hr", "区切り"],
+        "scope": "markdown",
+        "body": ["", "---", "$0"],
+        "description": "水平線"
+    },
+
+    // ========================================
+    //  テーブル
+    // ========================================
+    "テーブル 2列": {
+        "prefix": ["mk-table2", "表2"],
+        "scope": "markdown",
+        "body": [
+            "| ${1:項目} | ${2:説明} |",
+            "| --- | --- |",
+            "| $3 | $4 |",
+            "| $5 | $6 |",
+            "| $7 | $8 |$0"
+        ],
+        "description": "2列テーブル"
+    },
+    "テーブル 3列": {
+        "prefix": ["mk-table3", "表3"],
+        "scope": "markdown",
+        "body": [
+            "| ${1:項目} | ${2:説明} | ${3:備考} |",
+            "| --- | --- | --- |",
+            "| $4 | $5 | $6 |",
+            "| $7 | $8 | $9 |",
+            "| $10 | $11 | $12 |$0"
+        ],
+        "description": "3列テーブル"
+    },
+    "テーブル 4列": {
+        "prefix": ["mk-table4", "表4"],
+        "scope": "markdown",
+        "body": [
+            "| ${1:項目} | ${2:型} | ${3:デフォルト} | ${4:説明} |",
+            "| --- | --- | --- | --- |",
+            "| $5 | $6 | $7 | $8 |",
+            "| $9 | $10 | $11 | $12 |$0"
+        ],
+        "description": "4列テーブル"
+    },
+
+    // ========================================
+    //  リンク・画像
+    // ========================================
+    "リンク": {
+        "prefix": ["mk-link", "リンク"],
+        "scope": "markdown",
+        "body": ["[${1:表示テキスト}](${2:URL})$0"],
+        "description": "リンク"
+    },
+    "画像": {
+        "prefix": ["mk-image", "画像"],
+        "scope": "markdown",
+        "body": ["![${1:代替テキスト}](${2:images/${3:filename.png}})$0"],
+        "description": "画像の挿入"
+    },
+    "画像（サイズ指定）": {
+        "prefix": ["mk-imagesize", "画像サイズ"],
+        "scope": "markdown",
+        "body": ["![${1:代替テキスト}](${2:images/${3:filename.png}}){ width=\"${4:400}\" }$0"],
+        "description": "サイズ指定付き画像の挿入"
+    },
+    "ボタンリンク": {
+        "prefix": ["mk-button", "ボタン"],
+        "scope": "markdown",
+        "body": ["[${1:テキスト} :material-${2:download}:](${3:URL}){ .md-button }$0"],
+        "description": "ボタン風リンク"
+    },
+    "ボタンリンク（プライマリ）": {
+        "prefix": ["mk-button-primary", "ボタン主"],
+        "scope": "markdown",
+        "body": [
+            "[${1:テキスト} :material-${2:download}:](${3:URL}){ .md-button .md-button--primary }$0"
+        ],
+        "description": "プライマリボタン風リンク"
+    },
+
+    // ========================================
+    //  コードブロック
+    // ========================================
+    "コードブロック": {
+        "prefix": ["mk-code", "コード"],
+        "scope": "markdown",
+        "body": [
+            "```${1|bash,shell,python,yaml,json,hcl,sql,typescript,go|}",
+            "$2",
+            "```$0"
+        ],
+        "description": "コードブロック（言語選択付き）"
+    },
+    "コードブロック（タイトル付き）": {
+        "prefix": ["mk-code-title", "コードタイトル"],
+        "scope": "markdown",
+        "body": [
+            "```${1|bash,shell,python,yaml,json,hcl,sql,typescript,go|} title=\"${2:filename}\"",
+            "$3",
+            "```$0"
+        ],
+        "description": "タイトル付きコードブロック"
+    },
+
+    // ========================================
+    //  アドモニション
+    // ========================================
+    "アドモニション（汎用）": {
+        "prefix": ["mk-adm", "注意書き"],
+        "scope": "markdown",
+        "body": [
+            "!!! ${1|note,tip,info,warning,danger,success,failure,bug,example,question,quote|} \"${2:タイトル}\"",
+            "    ${3:内容}$0"
+        ],
+        "description": "アドモニション（種類をドロップダウン選択）"
+    },
+    "Note": {
+        "prefix": ["mk-note", "メモ"],
+        "scope": "markdown",
+        "body": ["!!! note \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Note（メモ）"
+    },
+    "Tip": {
+        "prefix": ["mk-tip", "ヒント"],
+        "scope": "markdown",
+        "body": ["!!! tip \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Tip（ヒント）"
+    },
+    "Info": {
+        "prefix": ["mk-info", "情報"],
+        "scope": "markdown",
+        "body": ["!!! info \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Info（情報）"
+    },
+    "Warning": {
+        "prefix": ["mk-warning", "警告"],
+        "scope": "markdown",
+        "body": ["!!! warning \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Warning（警告）"
+    },
+    "Danger": {
+        "prefix": ["mk-danger", "危険"],
+        "scope": "markdown",
+        "body": ["!!! danger \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Danger（危険）"
+    },
+    "Success": {
+        "prefix": ["mk-success", "成功"],
+        "scope": "markdown",
+        "body": ["!!! success \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Success（成功）"
+    },
+    "Example": {
+        "prefix": ["mk-example", "例"],
+        "scope": "markdown",
+        "body": ["!!! example \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Example（例）"
+    },
+    "Question": {
+        "prefix": ["mk-question", "質問"],
+        "scope": "markdown",
+        "body": ["!!! question \"${1:タイトル}\"", "    ${2:内容}$0"],
+        "description": "Question（質問）"
+    },
+
+    // ========================================
+    //  折りたたみ
+    // ========================================
+    "折りたたみ（閉じた状態）": {
+        "prefix": ["mk-details", "折りたたみ"],
+        "scope": "markdown",
+        "body": [
+            "??? ${1|note,tip,info,warning,danger,success,example,question|} \"${2:タイトル}\"",
+            "    ${3:内容}$0"
+        ],
+        "description": "折りたたみ（デフォルト閉、??? note）"
+    },
+    "折りたたみ（開いた状態）": {
+        "prefix": ["mk-details-open", "折りたたみ開"],
+        "scope": "markdown",
+        "body": [
+            "???+ ${1|note,tip,info,warning,danger,success,example,question|} \"${2:タイトル}\"",
+            "    ${3:内容}$0"
+        ],
+        "description": "折りたたみ（デフォルト開、???+ note）"
+    },
+
+    // ========================================
+    //  タブ
+    // ========================================
+    "タブ": {
+        "prefix": ["mk-tabs", "タブ"],
+        "scope": "markdown",
+        "body": [
+            "=== \"${1:タブ1}\"",
+            "",
+            "    ${2:内容1}",
+            "",
+            "=== \"${3:タブ2}\"",
+            "",
+            "    ${4:内容2}$0"
+        ],
+        "description": "コンテンツタブ (=== \"Tab\")"
+    },
+
+    // ========================================
+    //  Mermaid 図
+    // ========================================
+    "Mermaid フローチャート": {
+        "prefix": ["mk-mermaid", "フロー"],
+        "scope": "markdown",
+        "body": [
+            "```mermaid",
+            "graph ${1|TD,LR,TB,RL|}",
+            "    ${2:A}[${3:開始}] --> ${4:B}[${5:処理}]",
+            "    ${4:B} --> ${6:C}[${7:終了}]",
+            "```$0"
+        ],
+        "description": "Mermaid フローチャート"
+    },
+    "Mermaid シーケンス図": {
+        "prefix": ["mk-sequence", "シーケンス"],
+        "scope": "markdown",
+        "body": [
+            "```mermaid",
+            "sequenceDiagram",
+            "    ${1:参加者A}->>+${2:参加者B}: ${3:リクエスト}",
+            "    ${2:参加者B}-->>-${1:参加者A}: ${4:レスポンス}",
+            "```$0"
+        ],
+        "description": "Mermaid シーケンス図"
+    },
+    "Mermaid ガントチャート": {
+        "prefix": ["mk-gantt", "ガント"],
+        "scope": "markdown",
+        "body": [
+            "```mermaid",
+            "gantt",
+            "    title ${1:スケジュール}",
+            "    dateFormat YYYY-MM-DD",
+            "    section ${2:フェーズ1}",
+            "    ${3:タスク1} :a1, ${4:2024-01-01}, ${5:14d}",
+            "    ${6:タスク2} :a2, after a1, ${7:21d}",
+            "```$0"
+        ],
+        "description": "Mermaid ガントチャート"
+    },
+
+    // ========================================
+    //  Material アイコン・アノテーション
+    // ========================================
+    "アイコン": {
+        "prefix": ["mk-icon", "アイコン"],
+        "scope": "markdown",
+        "body": [
+            ":${1|material-check,material-close,material-alert,material-information,material-file-document,material-cog,material-download,material-upload,material-link,material-pencil|}:$0"
+        ],
+        "description": "Material アイコン"
+    },
+    "アノテーション": {
+        "prefix": ["mk-annotate", "注釈"],
+        "scope": "markdown",
+        "body": [
+            "${1:テキスト} (${2:1})",
+            "{ .annotate }",
+            "",
+            "${2:1}.  ${3:注釈の内容}$0"
+        ],
+        "description": "アノテーション"
+    },
+
+    // ========================================
+    //  Critic マークアップ（校正・差分）
+    // ========================================
+    "Critic 削除": {
+        "prefix": ["mk-critic-del", "校正削除"],
+        "scope": "markdown",
+        "body": ["{--${1:削除テキスト}--}$0"],
+        "description": "Critic: 削除マーク"
+    },
+    "Critic 追加": {
+        "prefix": ["mk-critic-add", "校正追加"],
+        "scope": "markdown",
+        "body": ["{++${1:追加テキスト}++}$0"],
+        "description": "Critic: 追加マーク"
+    },
+    "Critic 変更": {
+        "prefix": ["mk-critic-change", "校正変更"],
+        "scope": "markdown",
+        "body": ["{~~${1:変更前}~>${2:変更後}~~}$0"],
+        "description": "Critic: 変更マーク"
+    },
+    "Critic ハイライト": {
+        "prefix": ["mk-critic-highlight", "校正ハイライト"],
+        "scope": "markdown",
+        "body": ["{==${1:テキスト}==}$0"],
+        "description": "Critic: ハイライトマーク"
+    },
+    "Critic コメント": {
+        "prefix": ["mk-critic-comment", "校正コメント"],
+        "scope": "markdown",
+        "body": ["{>>${1:コメント}<<}$0"],
+        "description": "Critic: コメントマーク"
+    },
+
+    // ========================================
+    //  ページ構造
+    // ========================================
+    "ページテンプレート": {
+        "prefix": ["mk-page", "ページ"],
+        "scope": "markdown",
+        "body": [
+            "# ${1:タイトル}",
+            "",
+            "## 概要",
+            "",
+            "${2:ここに概要を記述}",
+            "",
+            "## ${3:セクション}",
+            "",
+            "$0"
+        ],
+        "description": "ページの基本構造"
+    }
+}

@@ -80,11 +80,8 @@
             "other": "on"
           }
         },
-        // markdownlintのルールを一部調整（Prettierとの競合回避）
-        "markdownlint.config": {
-          "MD013": false, // 行の長さ制限（Prettierに任せるため）
-          "MD033": false // HTMLの許可（MkDocsでアドモニション等を使うため）
-        },
+        // markdownlint の設定は .markdownlint.json で一元管理
+        "markdownlint.config": {},
         "[json]": {
           "editor.defaultFormatter": "esbenp.prettier-vscode"
         },
@@ -106,7 +103,10 @@
       }
     }
   },
-  "postCreateCommand": "sudo chown -R vscode /usr/local/share/nvm && sudo chown -R vscode /home/vscode/.config/gh",
+  "postCreateCommand": {
+    "fix-permissions": "sudo chown -R vscode /usr/local/share/nvm && sudo chown -R vscode /home/vscode/.config/gh",
+    "setup": "bash .devcontainer/setup.sh"
+  },
   "postStartCommand": {
     "update-claude-code": "npm install -g @anthropic-ai/claude-code@latest --silent",
     "update-pnpm": "npm install -g pnpm@latest --silent",
