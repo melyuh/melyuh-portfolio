@@ -44,28 +44,11 @@
       ],
       "settings": {
         "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
-        "python.terminal.activateEnvInCurrentTerminal": true,
+        "python.terminal.activateEnvInCurrentTerminal": false,
         // Pylanceの重い静的解析を無効化（MkDocs等の実行には影響しない）
         "python.languageServer": "None",
         "python.analysis.enabled": false,
-        // 保存時の自動整形を有効化
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-          "source.fixAll": "always",
-          "source.organizeImports": "always"
-        },
-        "errorLens.excludeBySource": ["cSpell"],
-        "cSpell.words": [
-          "mkdocs",
-          "melyuh",
-          "astral",
-          "pnpm",
-          "venv",
-          "ruff",
-          "devcontainer",
-          "terraform",
-          "!ENV"
-        ],
+
         // 言語ごとのフォーマッター指定
         "[python]": {
           "editor.defaultFormatter": "charliermarsh.ruff"
@@ -100,7 +83,8 @@
         },
         "[terraform]": {
           "editor.defaultFormatter": "hashicorp.terraform"
-        }
+        },
+        "remote.autoForwardPortsFallback": 0
       }
     }
   },

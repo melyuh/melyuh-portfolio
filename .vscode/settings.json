@@ -1,5 +1,24 @@
 {
-  "remote.autoForwardPortsFallback": 0,
+  // 保存時の自動整形を有効化
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "always",
+    "source.organizeImports": "always"
+  },
+
+  // cSpellの単語リスト（VSCodeの「辞書に追加」コマンドでここに追記される）
+  "cSpell.words": [
+    "mkdocs",
+    "melyuh",
+    "astral",
+    "pnpm",
+    "venv",
+    "ruff",
+    "devcontainer",
+    "terraform"
+  ],
+  "errorLens.excludeBySource": ["cSpell"],
+  "errorLens.excludePatterns": ["**/mkdocs.yml"],
 
   // 編集不要なファイル・フォルダをエクスプローラーから非表示
   "files.exclude": {
