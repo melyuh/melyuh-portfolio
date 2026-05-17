@@ -101,3 +101,7 @@ gantt
     テスト     :a3, after a2, 14d
     リリース   :milestone, after a3, 0d
 ```
+
+```python
+print(Hello World.)
+```

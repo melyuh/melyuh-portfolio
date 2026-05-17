@@ -24,10 +24,23 @@
     font-family: "Noto Sans CJK JP", sans-serif !important;
   }
 
+  /* 本文・リスト・テーブルのフォントサイズ */
+  body,
+  .md-typeset,
+  p,
+  li,
+  dt,
+  dd,
+  td,
+  th {
+    font-size: 10pt !important;
+  }
+
   code,
   pre,
   .highlight {
     font-family: "JetBrains Mono", "Noto Sans Mono CJK JP", monospace !important;
+    font-size: 9pt !important;
   }
 
   /*

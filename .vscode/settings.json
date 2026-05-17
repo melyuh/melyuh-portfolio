@@ -58,7 +58,7 @@
   // 関連ファイルを親ファイルの下に折りたたむ
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "pyproject.toml": "uv.lock",
+    "pyproject.toml": "uv.lock, .pre-commit-config.yaml",
     "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .prettierrc.json, .markdownlint.json"
   }
 }
