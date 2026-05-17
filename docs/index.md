@@ -1,107 +1,32 @@
-# Welcome to MkDocs
+# Melyuh's Portfolio
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+SRE / インフラエンジニアとして、信頼性の高いシステム設計・運用に取り組んでいます。
 
-## Commands
+---
 
-- `mkdocs new [dir-name]` - Create a new project.
-- `mkdocs serve` - Start the live-reloading docs server.
-- `mkdocs build` - Build the documentation site.
-- `mkdocs -h` - Print help message and exit.
+## About Me
 
-## Project layout
+<!-- 一言で自分を表すキャッチコピーや強みの概要をここに書く -->
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+| 項目         | 内容                                     |
+| ------------ | ---------------------------------------- |
+| **役割**     | SRE / インフラエンジニア                 |
+| **得意領域** | AWS・IaC (Terraform)・可観測性・障害対応 |
+| **キャリア** | [職歴を見る](profile/career.md)          |
 
-## Mermaid 図
+---
 
-スニペット: `mermaid` または `フロー`
+## Skills Highlights
 
-### フローチャート
+- **Cloud**: AWS (EC2, ECS, RDS, CloudFront, S3 など)
+- **IaC**: Terraform
+- **Observability**: <!-- 使用ツールを記載 -->
+- **CI/CD**: <!-- 使用ツールを記載 -->
 
-````markdown
-```mermaid
-graph TD
-    A[開始] --> B{条件分岐}
-    B -->|Yes| C[処理A]
-    B -->|No| D[処理B]
-    C --> E[終了]
-    D --> E
-```
-````
+---
 
-```mermaid
-graph TD
-    A[開始] --> B{条件分岐}
-    B -->|Yes| C[処理A]
-    B -->|No| D[処理B]
-    C --> E[終了]
-    D --> E
-```
+## Latest Blog Posts
 
-### シーケンス図
+<!-- 記事が増えたらここにリストアップする -->
 
-スニペット: `sequence` または `シーケンス`
-
-````markdown
-```mermaid
-sequenceDiagram
-    participant U as ユーザー
-    participant S as サーバー
-    participant D as データベース
-
-    U->>+S: リクエスト
-    S->>+D: クエリ
-    D-->>-S: 結果
-    S-->>-U: レスポンス
-```
-````
-
-```mermaid
-sequenceDiagram
-    participant U as ユーザー
-    participant S as サーバー
-    participant D as データベース
-
-    U->>+S: リクエスト
-    S->>+D: クエリ
-    D-->>-S: 結果
-    S-->>-U: レスポンス
-```
-
-### ガントチャート
-
-スニペット: `gantt` または `ガント`
-
-````markdown
-```mermaid
-gantt
-    title プロジェクトスケジュール
-    dateFormat YYYY-MM-DD
-    section フェーズ1
-    設計       :a1, 2024-01-01, 14d
-    開発       :a2, after a1, 21d
-    section フェーズ2
-    テスト     :a3, after a2, 14d
-    リリース   :milestone, after a3, 0d
-```
-````
-
-```mermaid
-gantt
-    title プロジェクトスケジュール
-    dateFormat YYYY-MM-DD
-    section フェーズ1
-    設計       :a1, 2024-01-01, 14d
-    開発       :a2, after a1, 21d
-    section フェーズ2
-    テスト     :a3, after a2, 14d
-    リリース   :milestone, after a3, 0d
-```
-
-```python
-print(Hello World.)
-```
+[Blog 一覧を見る →](blog/index.md)

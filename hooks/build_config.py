@@ -157,11 +157,11 @@ DEFAULT_COLOR = MATERIAL_COLORS["indigo"]
 # PDF_SCHEME ごとのカバーロゴと、コンテンツ内で非表示にする img クラス
 _PDF_LOGO_CONFIG = {
     "default": {
-        "cover_logo": "assets/melyuh_lightmode.png",
+        "cover_logo": "_assets/melyuh_lightmode.png",
         "hide_class": "logo-dark",  # ライト背景なので暗いロゴは不要
     },
     "slate": {
-        "cover_logo": "assets/melyuh_darkmode.png",
+        "cover_logo": "_assets/melyuh_darkmode.png",
         "hide_class": "logo-light",  # 暗い背景なので明るいロゴは不要
     },
 }
@@ -729,7 +729,7 @@ def on_config(config):
 
     # --- パレット CSS を生成 ---
     docs_dir = config["docs_dir"]
-    css_dir = os.path.join(docs_dir, "stylesheets")
+    css_dir = os.path.join(docs_dir, "_stylesheets")
     os.makedirs(css_dir, exist_ok=True)
     css_path = os.path.join(css_dir, "_palette.css")
 
@@ -742,20 +742,20 @@ def on_config(config):
     _generate_pdf_styles(os.path.join(project_root, "templates"), pdf_scheme)
 
     # extra_css の先頭に追加（Material デフォルトを上書き）
-    css_ref = "stylesheets/_palette.css"
+    css_ref = "_stylesheets/_palette.css"
     extra_css = config.get("extra_css", [])
     if css_ref not in extra_css:
         extra_css.insert(0, css_ref)
 
     # --- Mermaid ブラウザ向け初期化 JS を生成（serve 時の配色反映） ---
-    js_dir = os.path.join(docs_dir, "javascripts")
+    js_dir = os.path.join(docs_dir, "_javascripts")
     os.makedirs(js_dir, exist_ok=True)
     js_path = os.path.join(js_dir, "_mermaid_config.js")
     js_content = _generate_mermaid_config_js(schemes)
     _write_if_changed(js_path, js_content)
     log.info(f"Generated mermaid config JS: {js_path}")
 
-    js_ref = "javascripts/_mermaid_config.js"
+    js_ref = "_javascripts/_mermaid_config.js"
     extra_js = config.get("extra_javascript", [])
     if js_ref not in extra_js:
         # mermaid.min.js より前に挿入して window.mermaid を先行設定する
@@ -828,6 +828,13 @@ def on_post_page(output, page, config):
     pdf_file = f"{site_name}.pdf"
     viewer_file = f"{site_name}_pdf.html"
 
+    # ページの深さに応じてサイトルートへの相対パスを計算
+    page_dir = os.path.dirname(page.file.dest_path)
+    if page_dir:
+        viewer_href = os.path.relpath(viewer_file, page_dir).replace(os.sep, "/")
+    else:
+        viewer_href = viewer_file
+
     # <link rel="alternate" ... pdf ...> を除去（ダウンロード誘発防止）
     output = re.sub(r"<link[^>]*" + re.escape(pdf_file) + r"[^>]*>", "", output)
 
@@ -836,7 +843,7 @@ def on_post_page(output, page, config):
         r'href=["\']?[^"\'>\s]*'
         + re.escape(pdf_file)
         + r'["\']?\s*title=["\']?PDF["\']?',
-        f'href="{viewer_file}" title="PDF" target="_blank"',
+        f'href="{viewer_href}" title="PDF" target="_blank"',
         output,
     )
 
@@ -1183,7 +1190,7 @@ def _generate_both_pdfs(config):
         return
 
     template_dir = pdf_plugin._options.custom_template_path
-    palette_path = site_dir / "stylesheets" / "_palette.css"
+    palette_path = site_dir / "_stylesheets" / "_palette.css"
     orig_palette = (
         palette_path.read_text(encoding="utf-8") if palette_path.exists() else ""
     )

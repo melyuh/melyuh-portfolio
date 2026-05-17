@@ -11,7 +11,7 @@ theme:
   name: material
   language: ja
   # logo は overrides/partials/logo.html で動的に切り替え
-  favicon: assets/melyuh_favicon.png
+  favicon: _assets/melyuh_favicon.png
   custom_dir: overrides
   features:
     # Navigation
@@ -21,6 +21,7 @@ theme:
     - navigation.tabs.sticky      # スティッキータブ
     - navigation.sections         # セクション表示
     - navigation.expand           # 自動展開
+    - navigation.indexes          # セクションインデックスページ
     - navigation.path             # パンくずリスト
     - navigation.top              # トップに戻るボタン
     # Search
@@ -45,14 +46,14 @@ theme:
         name: ダークモードに切替
 
 extra_css:
-  - stylesheets/extra.css
-  - stylesheets/pdf.css
-  - stylesheets/glightbox.min.css
+  - _stylesheets/extra.css
+  - _stylesheets/pdf.css
+  - _stylesheets/glightbox.min.css
 
 extra_javascript:
-  - javascripts/mermaid.min.js
-  - javascripts/glightbox.min.js
-  - javascripts/pdf_scheme.js
+  - _javascripts/mermaid.min.js
+  - _javascripts/glightbox.min.js
+  - _javascripts/pdf_scheme.js
 
 markdown_extensions:
   # --- 基本 ---
@@ -118,6 +119,15 @@ plugins:
   - search:
       lang: ja
   - awesome-pages
+  - blog:
+      blog_dir: blog
+      post_url_date_format: yyyy/MM
+      post_date_format: long
+      archive_date_format: yyyy年
+      categories: true
+      authors: false
+  - tags:
+      tags_file: tags.md
   - table-reader:
       enabled: true
   - glightbox
@@ -145,7 +155,7 @@ plugins:
   # --- build 時のみ（環境変数で制御） ---
   - mermaid-to-svg:
       enabled: !ENV [RENDER_SVG, false]
-      output_dir: images
+      output_dir: _images
       image_id_enabled: true
       image_id_prefix: mermaid-diagram
       mermaid_config:
@@ -155,7 +165,7 @@ plugins:
           htmlLabels: false
   - svg-to-png:
       enabled: !ENV [RENDER_PNG, false]
-      output_dir: images
+      output_dir: _images
   - to-pdf:
       enabled: !ENV [ENABLE_PDF, false]
       toc_title: 目次

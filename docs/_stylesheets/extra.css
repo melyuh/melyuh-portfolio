@@ -57,8 +57,6 @@
 :root {
   /* サイドバーの幅を広げて項目の折り返しを防止 */
   --md-sidebar-width: 15rem; /* デフォルト 12.1rem から拡大 */
-
-  --md-bold-red: #cc0033;
 }
 
 /* --md-default-h-color は hooks/build_config.py で primary から自動生成 */
@@ -117,7 +115,9 @@
 /* ナビゲーションタブ: ヘッダーと同じ背景色・primary 色でテキスト */
 .md-tabs {
   background-color: var(--md-default-bg-color);
-  color: var(--md-default-fg-color); /* Material のデフォルト --md-primary-bg-color 継承を防ぐ */
+  color: var(
+    --md-default-fg-color
+  ); /* Material のデフォルト --md-primary-bg-color 継承を防ぐ */
 }
 
 .md-tabs__link {
@@ -209,13 +209,6 @@
   padding-left: 0.5em;
   padding-bottom: 0.2em;
   margin-bottom: 0.7em;
-}
-
-/* すべての太字テキスト（strong, b）を赤色に */
-.md-typeset strong,
-.md-typeset b {
-  color: var(--md-bold-red);
-  font-weight: bold;
 }
 
 @media print {
