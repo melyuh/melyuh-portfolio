@@ -47,7 +47,12 @@
     "site/": true,
     ".venv/": true,
     "**/__pycache__/": true,
-    "**/*.pyc": true
+    "**/*.pyc": true,
+    "**/*.pyo": true,
+    ".ruff_cache/": true,
+    ".mypy_cache/": true,
+    ".pytest_cache/": true,
+    ".cache/": true
   },
 
   // 関連ファイルを親ファイルの下に折りたたむ
