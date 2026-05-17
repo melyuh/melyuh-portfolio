@@ -22,5 +22,28 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "mypy>=2.1.0",
+    "poethepoet>=0.46.0",
     "pre-commit>=4.6.0",
+    "ruff>=0.15.13",
 ]
+
+[tool.poe.tasks]
+lint-markdown = "pnpm exec markdownlint-cli2 --fix '**/*.md' '!node_modules/**' '!.venv/**'"
+format-markdown = "pnpm exec prettier --write '**/*.md' --ignore-path .gitignore"
+check-markdown = [
+    "lint-markdown",
+    "format-markdown"
+]
+lint-python = "uv run ruff check --fix ."
+type-check-python = "uv run mypy ."
+format-python = "uv run ruff format ."
+check-python = [
+    "lint-python",
+    "type-check-python",
+    "format-python"
+]
+
+[[tool.mypy.overrides]]
+module = ["mkdocs_to_pdf.*", "weasyprint"]
+ignore_missing_imports = true

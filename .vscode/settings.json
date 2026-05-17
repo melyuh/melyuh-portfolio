@@ -54,6 +54,6 @@
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "pyproject.toml": "uv.lock",
-    "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .prettierrc.json, .markdownlint.json, .pre-commit-config.yaml"
+    "package.json": "pnpm-lock.yaml, pnpm-workspace.yaml, .prettierrc.json, .markdownlint.json"
   }
 }

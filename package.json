@@ -1,14 +1,10 @@
 {
-  "name": "portfolio",
+  "name": "melyuh-portfolio",
   "private": true,
-  "scripts": {
-    "lint:md": "markdownlint-cli2 \"docs/**/*.md\"",
-    "lint:md:fix": "markdownlint-cli2 --fix \"docs/**/*.md\"",
-    "format:md": "prettier --write \"docs/**/*.md\"",
-    "lint": "pnpm lint:md:fix && pnpm format:md"
-  },
   "pnpm": {
-    "onlyBuiltDependencies": ["puppeteer"]
+    "onlyBuiltDependencies": [
+      "puppeteer"
+    ]
   },
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^11.15.0",

@@ -1,13 +1,15 @@
 repos:
   - repo: local
     hooks:
-      - id: markdownlint
-        name: markdownlint-cli2
+      - id: poe-check-markdown
+        name: poe check markdown
         language: system
-        entry: pnpm exec markdownlint-cli2 --fix
+        entry: uv run poe check-markdown
         types: [markdown]
-      - id: prettier
-        name: prettier
+        pass_filenames: false
+      - id: poe-check-python
+        name: poe check python
         language: system
-        entry: pnpm exec prettier --write
-        types: [markdown]
+        entry: uv run poe check-python
+        types: [python]
+        pass_filenames: false

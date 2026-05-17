@@ -155,7 +155,7 @@ DEFAULT_COLOR = MATERIAL_COLORS["indigo"]
 _PDF_LOGO_CONFIG = {
     "default": {
         "cover_logo": "assets/melyuh_lightmode.png",
-        "hide_class": "logo-dark",   # ライト背景なので暗いロゴは不要
+        "hide_class": "logo-dark",  # ライト背景なので暗いロゴは不要
     },
     "slate": {
         "cover_logo": "assets/melyuh_darkmode.png",
@@ -198,43 +198,47 @@ def _blend_white(hex_color, factor):
 def _blend_black(hex_color, factor):
     """hex_color を黒に向けて factor (0–1) だけ近づける"""
     r, g, b = _hex_to_rgb(hex_color)
-    return f"#{int(r*(1-factor)):02x}{int(g*(1-factor)):02x}{int(b*(1-factor)):02x}"
+    return f"#{int(r * (1 - factor)):02x}{int(g * (1 - factor)):02x}{int(b * (1 - factor)):02x}"
 
 
 def _rgb_to_hsl(r, g, b):
     r, g, b = r / 255, g / 255, b / 255
     hi, lo = max(r, g, b), min(r, g, b)
-    l = (hi + lo) / 2
+    lightness = (hi + lo) / 2
     if hi == lo:
-        return 0.0, 0.0, l
+        return 0.0, 0.0, lightness
     d = hi - lo
-    s = d / (2 - hi - lo) if l > 0.5 else d / (hi + lo)
+    s = d / (2 - hi - lo) if lightness > 0.5 else d / (hi + lo)
     if hi == r:
         h = (g - b) / d % 6
     elif hi == g:
         h = (b - r) / d + 2
     else:
         h = (r - g) / d + 4
-    return h / 6, s, l
+    return h / 6, s, lightness
 
 
-def _hsl_to_hex(h, s, l):
+def _hsl_to_hex(h, s, lightness):
     if s == 0:
-        v = round(l * 255)
+        v = round(lightness * 255)
         return f"#{v:02x}{v:02x}{v:02x}"
-    q = l * (1 + s) if l < 0.5 else l + s - l * s
-    p = 2 * l - q
+    q = lightness * (1 + s) if lightness < 0.5 else lightness + s - lightness * s
+    p = 2 * lightness - q
 
     def _f(t):
         t %= 1
-        if t < 1 / 6: return p + (q - p) * 6 * t
-        if t < 0.5:   return q
-        if t < 2 / 3: return p + (q - p) * (2 / 3 - t) * 6
+        if t < 1 / 6:
+            return p + (q - p) * 6 * t
+        if t < 0.5:
+            return q
+        if t < 2 / 3:
+            return p + (q - p) * (2 / 3 - t) * 6
         return p
 
     def _c(v):
         return min(round(v * 255), 255)
-    return f"#{_c(_f(h+1/3)):02x}{_c(_f(h)):02x}{_c(_f(h-1/3)):02x}"
+
+    return f"#{_c(_f(h + 1 / 3)):02x}{_c(_f(h)):02x}{_c(_f(h - 1 / 3)):02x}"
 
 
 def _heading_color(hex_color, is_dark):
@@ -247,10 +251,10 @@ def _heading_color(hex_color, is_dark):
 
 def _make_custom_palette(color):
     return {
-        "main":   color,
-        "light":  _blend_white(color, 0.4),
+        "main": color,
+        "light": _blend_white(color, 0.4),
         "vlight": _blend_white(color, 0.82),
-        "dark":   _blend_black(color, 0.1),
+        "dark": _blend_black(color, 0.1),
     }
 
 
@@ -294,27 +298,27 @@ def _build_palette_css(schemes, pdf_scheme="default"):
         is_dark = p_scheme == "slate"
 
         if is_dark:
-            bg           = "hsla(232,15%,21%,1)"
-            bg_light     = "hsla(232,15%,25%,1)"
-            bg_lighter   = "hsla(232,15%,28%,1)"
-            bg_lightest  = "hsla(232,15%,32%,1)"
-            fg           = "hsla(0,0%,100%,.87)"
-            fg_light     = "hsla(0,0%,100%,.54)"
-            fg_lighter   = "hsla(0,0%,100%,.32)"
-            fg_lightest  = "hsla(0,0%,100%,.12)"
-            code_fg      = "hsla(0,0%,100%,.87)"
-            code_bg      = "hsla(200,15%,14%,1)"
+            bg = "hsla(232,15%,21%,1)"
+            bg_light = "hsla(232,15%,25%,1)"
+            bg_lighter = "hsla(232,15%,28%,1)"
+            bg_lightest = "hsla(232,15%,32%,1)"
+            fg = "hsla(0,0%,100%,.87)"
+            fg_light = "hsla(0,0%,100%,.54)"
+            fg_lighter = "hsla(0,0%,100%,.32)"
+            fg_lightest = "hsla(0,0%,100%,.12)"
+            code_fg = "hsla(0,0%,100%,.87)"
+            code_bg = "hsla(200,15%,14%,1)"
         else:
-            bg           = "#ffffff"
-            bg_light     = "hsla(0,0%,96%,1)"
-            bg_lighter   = "hsla(0,0%,98%,1)"
-            bg_lightest  = "hsla(0,0%,100%,1)"
-            fg           = "hsla(0,0%,0%,.87)"
-            fg_light     = "hsla(0,0%,0%,.54)"
-            fg_lighter   = "hsla(0,0%,0%,.32)"
-            fg_lightest  = "hsla(0,0%,0%,.12)"
-            code_fg      = "hsla(200,18%,26%,1)"
-            code_bg      = "hsla(0,0%,96%,1)"
+            bg = "#ffffff"
+            bg_light = "hsla(0,0%,96%,1)"
+            bg_lighter = "hsla(0,0%,98%,1)"
+            bg_lightest = "hsla(0,0%,100%,1)"
+            fg = "hsla(0,0%,0%,.87)"
+            fg_light = "hsla(0,0%,0%,.54)"
+            fg_lighter = "hsla(0,0%,0%,.32)"
+            fg_lightest = "hsla(0,0%,0%,.12)"
+            code_fg = "hsla(200,18%,26%,1)"
+            code_bg = "hsla(0,0%,96%,1)"
 
         h_color = _heading_color(p_primary["main"], is_dark)
         logo_cfg = _PDF_LOGO_CONFIG.get(p_scheme, _PDF_LOGO_CONFIG["default"])
@@ -595,7 +599,7 @@ def _generate_mermaid_config_js(schemes: list) -> str:
 def _generate_pdf_styles(template_dir: str, pdf_scheme: str):
     """PDF スキームに合わせたテキスト色を styles.scss に出力する"""
     is_dark = pdf_scheme == "slate"
-    fg       = "hsla(0,0%,100%,.87)" if is_dark else "hsla(0,0%,0%,.87)"
+    fg = "hsla(0,0%,100%,.87)" if is_dark else "hsla(0,0%,0%,.87)"
     fg_light = "hsla(0,0%,100%,.54)" if is_dark else "hsla(0,0%,0%,.54)"
 
     scss = f"""// Auto-generated by hooks/build_config.py (PDF_SCHEME={pdf_scheme})
@@ -771,7 +775,9 @@ def on_config(config):
             pdf_plugin._options.html_path = "_pdf_source.html"
             # PDF 内の画像リンクを除去するフックを差し込む（EventHookHandler の公式機構をバイパス）
             pdf_plugin._options.hook.pre_pdf_render = _pre_pdf_render
-            log.info("to-pdf: _copyright, _cover_logo, html_path, pre_pdf_render updated")
+            log.info(
+                "to-pdf: _copyright, _cover_logo, html_path, pre_pdf_render updated"
+            )
 
             _generate_pdf_styles(
                 pdf_plugin._options.custom_template_path,
@@ -811,7 +817,11 @@ def on_post_page(output, page, config):
     # 継承が機能しないため、要素に style= を直接付与してインラインスタイルで上書きする。
     pdf_article = getattr(page, "pdf-article", None)
     if pdf_article is not None:
-        icon_fill = "rgba(255,255,255,0.54)" if _pdf_scheme_global == "slate" else "rgba(0,0,0,0.54)"
+        icon_fill = (
+            "rgba(255,255,255,0.54)"
+            if _pdf_scheme_global == "slate"
+            else "rgba(0,0,0,0.54)"
+        )
         _fix_source_file_icon_fill(pdf_article, icon_fill)
 
     # mermaid PNG をライト/ダーク両モードで生成し HTML を差し替える。
@@ -831,6 +841,7 @@ def _pre_pdf_render(html_string: str) -> str:
     html_path への保存もこのフック後なので _pdf_source.html にも反映される。
     """
     from bs4 import BeautifulSoup
+
     soup = BeautifulSoup(html_string, "html.parser")
     for a in soup.find_all("a", href=True):
         if a.find("img"):
@@ -853,11 +864,12 @@ def _fix_source_file_icon_fill(article, fill_color: str):
                     _set_fill_style(path, fill_color)
 
 
-
 def _set_fill_style(tag, fill_color: str):
     """既存の style 属性を保持しつつ fill プロパティを末尾に追加する"""
     existing = tag.get("style", "").strip().rstrip(";")
-    parts = [p for p in existing.split(";") if p.strip() and not p.strip().startswith("fill")]
+    parts = [
+        p for p in existing.split(";") if p.strip() and not p.strip().startswith("fill")
+    ]
     parts.append(f"fill: {fill_color}")
     tag["style"] = "; ".join(p.strip() for p in parts) + ";"
 
@@ -872,7 +884,9 @@ def _fix_mermaid_svgs(site_dir):
         return
     for svg_path in images_dir.glob("*_mermaid_*.svg"):
         text = svg_path.read_text(encoding="utf-8")
-        fixed = re.sub(r"background-color\s*:\s*white\b", "background-color: transparent", text)
+        fixed = re.sub(
+            r"background-color\s*:\s*white\b", "background-color: transparent", text
+        )
         if fixed != text:
             svg_path.write_text(fixed, encoding="utf-8")
             log.info(f"mermaid SVG background fixed: {svg_path.name}")
@@ -901,21 +915,38 @@ def _generate_dark_svg(mermaid_source: str, project_root) -> "str | None":
         with tempfile.TemporaryDirectory() as tmpdir:
             td = Path(tmpdir)
             (td / "input.mmd").write_text(mermaid_source, encoding="utf-8")
-            (td / "config.json").write_text(json.dumps(_mermaid_dark_config), encoding="utf-8")
-            (td / "puppeteer.json").write_text(json.dumps(puppeteer_cfg), encoding="utf-8")
+            (td / "config.json").write_text(
+                json.dumps(_mermaid_dark_config), encoding="utf-8"
+            )
+            (td / "puppeteer.json").write_text(
+                json.dumps(puppeteer_cfg), encoding="utf-8"
+            )
             result = subprocess.run(
-                [str(mmdc), "-i", str(td / "input.mmd"), "-o", str(td / "output.svg"),
-                 "--configFile", str(td / "config.json"),
-                 "--puppeteerConfigFile", str(td / "puppeteer.json"),
-                 "-b", "transparent"],
-                capture_output=True, text=True, timeout=60,
+                [
+                    str(mmdc),
+                    "-i",
+                    str(td / "input.mmd"),
+                    "-o",
+                    str(td / "output.svg"),
+                    "--configFile",
+                    str(td / "config.json"),
+                    "--puppeteerConfigFile",
+                    str(td / "puppeteer.json"),
+                    "-b",
+                    "transparent",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=60,
                 cwd=str(project_root),
             )
             if result.returncode == 0:
                 out = td / "output.svg"
                 if out.exists():
                     return out.read_text(encoding="utf-8")
-            log.warning(f"mmdc (dark) attempt {attempt + 1} failed: {result.stderr[:200]}")
+            log.warning(
+                f"mmdc (dark) attempt {attempt + 1} failed: {result.stderr[:200]}"
+            )
 
     return None
 
@@ -931,7 +962,7 @@ def _render_svg_to_png(browser, svg_content: str, png_path):
     html = (
         '<html style="background:transparent;margin:0">'
         '<body style="margin:0;background:transparent">'
-        f'{svg_content}</body></html>'
+        f"{svg_content}</body></html>"
     )
     pw_page = browser.new_page(viewport={"width": vw, "height": vh})
     pw_page.set_content(html)
@@ -945,7 +976,9 @@ def _render_svg_to_png(browser, svg_content: str, png_path):
     pw_page.close()
 
 
-def _replace_mermaid_in_html(html: str, orig_src: str, default_src: str, slate_src: str) -> str:
+def _replace_mermaid_in_html(
+    html: str, orig_src: str, default_src: str, slate_src: str
+) -> str:
     """<a href=X.png><img src=X.png></a> を light/dark の2スパンに差し替える"""
     import re
 
@@ -959,15 +992,15 @@ def _replace_mermaid_in_html(html: str, orig_src: str, default_src: str, slate_s
         )
 
     a_pattern = (
-        r'<a\s[^>]*?' + escaped + r'[^>]*?>'
-        r'<img\s[^>]*?' + escaped + r'[^>]*?>'
-        r'</a>'
+        r"<a\s[^>]*?" + escaped + r"[^>]*?>"
+        r"<img\s[^>]*?" + escaped + r"[^>]*?>"
+        r"</a>"
     )
     result = re.sub(a_pattern, wrap, html)
     if result != html:
         return result
 
-    return re.sub(r'<img\s[^>]*?' + escaped + r'[^>]*?>', wrap, html)
+    return re.sub(r"<img\s[^>]*?" + escaped + r"[^>]*?>", wrap, html)
 
 
 def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
@@ -982,9 +1015,11 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
     import shutil
     from pathlib import Path
 
-    png_srcs = list(dict.fromkeys(re.findall(
-        r'src=["\']?([^"\'>\s]*_mermaid_[^"\'>\s]*\.png)["\']?', output
-    )))
+    png_srcs = list(
+        dict.fromkeys(
+            re.findall(r'src=["\']?([^"\'>\s]*_mermaid_[^"\'>\s]*\.png)["\']?', output)
+        )
+    )
     if not png_srcs:
         return output
 
@@ -996,14 +1031,20 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
     # markdown ソースから mermaid ブロックをインデックス順に抽出
     # 4バックティック以上のフェンス（コード表示用）内の ```mermaid を除外するため先に除去する
     md_content = (docs_dir / page.file.src_path).read_text(encoding="utf-8")
-    md_stripped = re.sub(r'````+[^\n]*\n.*?````+[^\n]*', '', md_content, flags=re.DOTALL)
-    mermaid_blocks = re.findall(r'```mermaid\n(.*?)```', md_stripped, re.DOTALL)
+    md_stripped = re.sub(
+        r"````+[^\n]*\n.*?````+[^\n]*", "", md_content, flags=re.DOTALL
+    )
+    mermaid_blocks = re.findall(r"```mermaid\n(.*?)```", md_stripped, re.DOTALL)
 
     # PNG パスとダイアグラムインデックスを解決
     png_info = []  # list of (png_path, diagram_idx, src)
     for src in png_srcs:
-        png_path = (site_dir / src.lstrip("/")) if src.startswith("/") else (page_dir / src).resolve()
-        m = re.search(r'_mermaid_(\d+)_', str(png_path))
+        png_path = (
+            (site_dir / src.lstrip("/"))
+            if src.startswith("/")
+            else (page_dir / src).resolve()
+        )
+        m = re.search(r"_mermaid_(\d+)_", str(png_path))
         if not m:
             continue
         idx = int(m.group(1))
@@ -1018,7 +1059,9 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
     for png_path, idx, src in png_info:
         svg_path = png_path.with_suffix(".svg")
         text = svg_path.read_text(encoding="utf-8")
-        fixed = re.sub(r"background-color\s*:\s*white\b", "background-color: transparent", text)
+        fixed = re.sub(
+            r"background-color\s*:\s*white\b", "background-color: transparent", text
+        )
         if fixed != text:
             svg_path.write_text(fixed, encoding="utf-8")
 
@@ -1029,7 +1072,9 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
             continue
         raw = _generate_dark_svg(mermaid_blocks[idx], project_root)
         if raw:
-            raw = re.sub(r"background-color\s*:\s*white\b", "background-color: transparent", raw)
+            raw = re.sub(
+                r"background-color\s*:\s*white\b", "background-color: transparent", raw
+            )
             dark_svgs[src] = raw
 
     # Playwright で light/dark PNG を透明背景で生成（別スレッドで asyncio 競合を回避）
@@ -1038,6 +1083,7 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
     def _render_all():
         try:
             from playwright.sync_api import sync_playwright
+
             with sync_playwright() as p:
                 browser = p.chromium.launch()
                 for png_path, idx, src in png_info:
@@ -1058,7 +1104,9 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
                         log.warning(f"mermaid dark fallback (copy): {slate_path.name}")
 
                     # PDF 用: X.png を PDF_SCHEME 対応版で上書き
-                    pdf_src = slate_path if _pdf_scheme_global == "slate" else default_path
+                    pdf_src = (
+                        slate_path if _pdf_scheme_global == "slate" else default_path
+                    )
                     shutil.copy2(pdf_src, png_path)
 
                 browser.close()
@@ -1066,6 +1114,7 @@ def _fix_mermaid_pngs_for_page(output: str, page, config) -> str:
             errors.append(str(e))
 
     import threading
+
     t = threading.Thread(target=_render_all)
     t.start()
     t.join(timeout=180)
@@ -1123,17 +1172,27 @@ def _generate_both_pdfs(config):
 
     template_dir = pdf_plugin._options.custom_template_path
     palette_path = site_dir / "stylesheets" / "_palette.css"
-    orig_palette = palette_path.read_text(encoding="utf-8") if palette_path.exists() else ""
+    orig_palette = (
+        palette_path.read_text(encoding="utf-8") if palette_path.exists() else ""
+    )
 
     # 代替スキームの print CSS（styles.scss を含む）を生成
     _generate_pdf_styles(template_dir, alt)
     from mkdocs_to_pdf.styles import style_for_print
+
     alt_print_css = style_for_print(pdf_plugin._options)
 
     # HTML 内の style_for_print ブロック（string-set: を含む）を差し替え
     def swap_print_style(m):
-        return f'{m.group(1)}{alt_print_css}{m.group(3)}' if "string-set:" in m.group(2) else m.group(0)
-    alt_html = re.sub(r"(<style[^>]*>)(.*?)(</style>)", swap_print_style, html, flags=re.DOTALL)
+        return (
+            f"{m.group(1)}{alt_print_css}{m.group(3)}"
+            if "string-set:" in m.group(2)
+            else m.group(0)
+        )
+
+    alt_html = re.sub(
+        r"(<style[^>]*>)(.*?)(</style>)", swap_print_style, html, flags=re.DOTALL
+    )
 
     # カバーロゴを代替スキーム用に差し替え
     orig_logo = _PDF_LOGO_CONFIG[primary]["cover_logo"]
@@ -1155,8 +1214,11 @@ def _generate_both_pdfs(config):
                 png_backups.append((orig_png, backup))
 
     try:
-        palette_path.write_text(_build_palette_css(_schemes_global, alt), encoding="utf-8")
+        palette_path.write_text(
+            _build_palette_css(_schemes_global, alt), encoding="utf-8"
+        )
         import weasyprint
+
         weasyprint.HTML(string=alt_html).write_pdf(str(alt_pdf))
         log.info(f"Alternate PDF ({alt}) generated: {alt_pdf.name}")
     except Exception as e:

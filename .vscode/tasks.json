@@ -48,9 +48,22 @@
     //  リント・整形
     // ========================================
     {
-      "label": "melyuh-portfolio: Lint Markdown",
+      "label": "melyuh-portfolio: Check Markdown",
       "type": "shell",
-      "command": "pnpm lint",
+      "command": "uv run poe check-markdown",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "problemMatcher": []
+    },
+
+    {
+      "label": "melyuh-portfolio: Check Python",
+      "type": "shell",
+      "command": "uv run poe check-python",
       "group": "build",
       "presentation": {
         "reveal": "always",
