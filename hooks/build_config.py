@@ -858,6 +858,13 @@ def on_post_page(output, page, config):
             else "rgba(0,0,0,0.54)"
         )
         _fix_source_file_icon_fill(pdf_article, icon_fill)
+        grid_fill = "#1a1a1a" if _pdf_scheme_global == "slate" else "#ffffff"
+        _fix_grid_card_icon_fill(pdf_article, grid_fill)
+        arrow_fill = next(
+            (p["main"] for s, p, _ in _schemes_global if s == _pdf_scheme_global),
+            "#26C6DA",
+        )
+        _fix_grid_card_arrow_fill(pdf_article, arrow_fill)
 
     # mermaid PNG をライト/ダーク両モードで生成し HTML を差し替える。
     # to-pdf の on_post_build（PDF レンダリング）より先に実行されるため、
@@ -868,20 +875,162 @@ def on_post_page(output, page, config):
 
 
 def _pre_pdf_render(html_string: str) -> str:
-    """WeasyPrint レンダリング直前に画像リンクの href を除去してクリック不可にする。
+    """WeasyPrint レンダリング直前に HTML を加工する。
+
+    1. 画像リンクの href を除去してクリック不可にする
+    2. グリッドカードアイコンの fill を設定する
+       （to-pdf の fix_twemoji が SVG を base64 img に変換済みのため decode/re-encode する）
 
     to-pdf の EventHookHandler.pre_pdf_render をインスタンス属性で上書きして差し込む。
-    このタイミングは replace_asset_hrefs 適用後かつ WeasyPrint 呼び出し前なので
-    pdf-article の BeautifulSoup 構造に干渉しない。
-    html_path への保存もこのフック後なので _pdf_source.html にも反映される。
+    このタイミングは WeasyPrint 呼び出し前かつ html_path 保存前なので
+    _pdf_source.html にも変更が反映される。
     """
     from bs4 import BeautifulSoup
 
     soup = BeautifulSoup(html_string, "html.parser")
+
+    # 画像リンクの href を除去
     for a in soup.find_all("a", href=True):
         if a.find("img"):
             del a["href"]
+
+    # グリッドカードアイコン: fix_twemoji 変換後の base64 img の fill を設定
+    # この時点では SVG は base64 img に変換済みのため _fix_converted_twemoji_fill を使用
+    grid_fill = "#1a1a1a" if _pdf_scheme_global == "slate" else "#ffffff"
+    _fix_converted_twemoji_fill(soup, grid_fill)
+    log.info(f"pre_pdf_render: grid card icon fill set to {grid_fill}")
+    arrow_fill = next(
+        (p["main"] for s, p, _ in _schemes_global if s == _pdf_scheme_global),
+        "#26C6DA",
+    )
+    _fix_converted_arrow_fill(soup, arrow_fill)
+    log.info(f"pre_pdf_render: arrow icon fill set to {arrow_fill}")
+
     return str(soup)
+
+
+def _fix_grid_card_icon_fill(article, fill_color: str):
+    """グリッドカード先頭行のアイコン SVG に fill を SVG 属性として直接設定する。
+
+    WeasyPrint は CSS の fill プロパティ（インラインスタイル含む）を SVG 要素に
+    適用しないため、SVG ネイティブの fill 属性（fill="color"）を直接付与する。
+
+    on_post_page で pdf_article に対して呼び出す用途（fix_twemoji 変換前）。
+    fix_twemoji 変換後（pre_pdf_render / _generate_both_pdfs）は
+    _fix_converted_twemoji_fill を使用する。
+    """
+    svg_count = 0
+    for span in article.select("span.twemoji.lg.middle"):
+        for svg in span.find_all("svg"):
+            svg["fill"] = fill_color
+            for el in svg.find_all(["path", "polygon", "circle", "rect"]):
+                el["fill"] = fill_color
+            svg_count += 1
+    if svg_count:
+        log.info(
+            f"_fix_grid_card_icon_fill: {svg_count} SVG(s) updated → fill={fill_color}"
+        )
+    else:
+        log.debug(f"_fix_grid_card_icon_fill: no SVG found (fill={fill_color})")
+
+
+def _fix_grid_card_arrow_fill(article, fill_color: str):
+    """グリッドカードリンク行（p:last-child）の矢印アイコン SVG に fill を設定する。
+
+    on_post_page で pdf_article に対して呼び出す用途（fix_twemoji 変換前）。
+    fix_twemoji 変換後は _fix_converted_arrow_fill を使用する。
+    """
+    svg_count = 0
+    for p in article.select(".grid.cards li > p:last-child"):
+        for span in p.find_all("span", class_="twemoji"):
+            for svg in span.find_all("svg"):
+                svg["fill"] = fill_color
+                for el in svg.find_all(["path", "polygon", "circle", "rect"]):
+                    el["fill"] = fill_color
+                svg_count += 1
+    if svg_count:
+        log.info(
+            f"_fix_grid_card_arrow_fill: {svg_count} SVG(s) updated → fill={fill_color}"
+        )
+    else:
+        log.debug(f"_fix_grid_card_arrow_fill: no SVG found (fill={fill_color})")
+
+
+def _fix_converted_twemoji_fill(soup, fill_color: str) -> int:
+    """fix_twemoji 変換後の base64 SVG img タグの fill 色を変更する。
+
+    to-pdf の fix_twemoji は `.twemoji svg` を base64 エンコードした
+    `<img class="converted-twemoji">` に変換する。この変換後は SVG 要素が
+    DOM に存在しないため、base64 データを decode → fill 書き換え → re-encode する。
+
+    span.twemoji.lg.middle 固有の img のみを対象とする。
+    """
+    import base64
+    from bs4 import BeautifulSoup as _SVGSoup
+
+    count = 0
+    prefix = "data:image/svg+xml;charset=utf-8;base64,"
+    for span in soup.select("span.twemoji.lg.middle"):
+        for img in span.find_all("img", class_="converted-twemoji"):
+            src = img.get("src", "")
+            if not src.startswith(prefix):
+                continue
+            try:
+                b64data = src[len(prefix) :]
+                svg_str = base64.b64decode(b64data).decode("utf-8")
+                svg_soup = _SVGSoup(svg_str, "html.parser")
+                for svg_el in svg_soup.find_all("svg"):
+                    svg_el["fill"] = fill_color
+                    svg_el["style"] = f"fill: {fill_color};"
+                    for el in svg_el.find_all(["path", "polygon", "circle", "rect"]):
+                        el["fill"] = fill_color
+                new_svg_str = str(svg_soup)
+                new_b64 = base64.b64encode(new_svg_str.encode("utf-8")).decode("ascii")
+                img["src"] = prefix + new_b64
+                count += 1
+            except Exception as e:
+                log.warning(f"_fix_converted_twemoji_fill: {e}")
+    log.info(f"_fix_converted_twemoji_fill: {count} img(s) updated → fill={fill_color}")
+    return count
+
+
+def _fix_converted_arrow_fill(soup, fill_color: str) -> int:
+    """グリッドカードリンク行（p:last-child）の fix_twemoji 変換後 base64 SVG img の fill を設定する。
+
+    fix_twemoji 変換前は _fix_grid_card_arrow_fill を使用する。
+    """
+    import base64
+    from bs4 import BeautifulSoup as _SVGSoup
+
+    count = 0
+    prefix = "data:image/svg+xml;charset=utf-8;base64,"
+    for p in soup.select(".grid.cards li > p:last-child"):
+        for span in p.find_all("span", class_="twemoji"):
+            for img in span.find_all("img", class_="converted-twemoji"):
+                src = img.get("src", "")
+                if not src.startswith(prefix):
+                    continue
+                try:
+                    b64data = src[len(prefix) :]
+                    svg_str = base64.b64decode(b64data).decode("utf-8")
+                    svg_soup = _SVGSoup(svg_str, "html.parser")
+                    for svg_el in svg_soup.find_all("svg"):
+                        svg_el["fill"] = fill_color
+                        svg_el["style"] = f"fill: {fill_color};"
+                        for el in svg_el.find_all(
+                            ["path", "polygon", "circle", "rect"]
+                        ):
+                            el["fill"] = fill_color
+                    new_svg_str = str(svg_soup)
+                    new_b64 = base64.b64encode(new_svg_str.encode("utf-8")).decode(
+                        "ascii"
+                    )
+                    img["src"] = prefix + new_b64
+                    count += 1
+                except Exception as e:
+                    log.warning(f"_fix_converted_arrow_fill: {e}")
+    log.info(f"_fix_converted_arrow_fill: {count} img(s) updated → fill={fill_color}")
+    return count
 
 
 def _fix_source_file_icon_fill(article, fill_color: str):
@@ -1224,6 +1373,22 @@ def _generate_both_pdfs(config):
     )
     alt_fill = "rgba(0,0,0,0.54)" if primary == "slate" else "rgba(255,255,255,0.54)"
     alt_html = alt_html.replace(f"fill: {primary_fill}", f"fill: {alt_fill}")
+
+    # グリッドカードアイコン: 代替スキーム用に base64 SVG img の fill を変更
+    # _pdf_source.html は fix_twemoji 変換後の HTML のため _fix_converted_twemoji_fill を使用
+    from bs4 import BeautifulSoup as _BS
+
+    alt_soup = _BS(alt_html, "html.parser")
+    grid_alt_fill = "#ffffff" if alt == "default" else "#1a1a1a"
+    _fix_converted_twemoji_fill(alt_soup, grid_alt_fill)
+    log.info(f"Alternate PDF ({alt}): grid card icon fill set to {grid_alt_fill}")
+    arrow_alt_fill = next(
+        (p["main"] for s, p, _ in _schemes_global if s == alt),
+        "#00838F",
+    )
+    _fix_converted_arrow_fill(alt_soup, arrow_alt_fill)
+    log.info(f"Alternate PDF ({alt}): arrow icon fill set to {arrow_alt_fill}")
+    alt_html = str(alt_soup)
 
     # mermaid PNG を代替スキーム用に一時差し替え
     images_dir = site_dir / "images"

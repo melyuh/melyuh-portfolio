@@ -325,7 +325,7 @@
         "prefix": ["mk-icon", "アイコン"],
         "scope": "markdown",
         "body": [
-            ":${1|material-check,material-close,material-alert,material-information,material-file-document,material-cog,material-download,material-upload,material-link,material-pencil|}:$0"
+            ":${1|:material-pencil-outline:,:material-book-open-outline:,:material-note-edit-outline:,:material-file-document-outline:,:material-account-outline:,:material-server-outline:,:material-cloud-outline:,:material-database-outline:,:material-code-tags:,:material-console:,:material-language-python:,:material-cog-outline:,:material-wrench-outline:,:material-tools:,:material-chart-line:,:material-chart-bar:,:material-monitor-dashboard:,:material-shield-outline:,:material-lock-outline:,:material-network-outline:,:material-rocket-launch-outline:,:material-alert-outline:,:material-magnify:,:material-home-outline:,:material-information-outline:,:material-puzzle-outline:,:material-tag-outline:,:material-layers-outline:,:simple-github:,:simple-docker:,:simple-kubernetes:,:simple-terraform:,:simple-amazonaws:,:simple-ansible:,:simple-prometheus:,:simple-grafana:,:simple-linux:|}:$0"
         ],
         "description": "Material アイコン"
     },
@@ -373,6 +373,50 @@
         "scope": "markdown",
         "body": ["{>>${1:コメント}<<}$0"],
         "description": "Critic: コメントマーク"
+    },
+
+    // ========================================
+    //  グリッドカード
+    // ========================================
+    "グリッドカード": {
+        "prefix": ["mk-grid-cards", "グリッドカード"],
+        "scope": "markdown",
+        "body": [
+            "<div class=\"grid cards\" markdown>",
+            "",
+            "-   ${1|:material-pencil-outline:,:material-book-open-outline:,:material-note-edit-outline:,:material-file-document-outline:,:material-account-outline:,:material-server-outline:,:material-cloud-outline:,:material-database-outline:,:material-code-tags:,:material-console:,:material-language-python:,:material-cog-outline:,:material-wrench-outline:,:material-tools:,:material-chart-line:,:material-chart-bar:,:material-monitor-dashboard:,:material-shield-outline:,:material-lock-outline:,:material-network-outline:,:material-rocket-launch-outline:,:material-alert-outline:,:material-magnify:,:material-home-outline:,:material-information-outline:,:material-puzzle-outline:,:material-tag-outline:,:material-layers-outline:,:simple-github:,:simple-docker:,:simple-kubernetes:,:simple-terraform:,:simple-amazonaws:,:simple-ansible:,:simple-prometheus:,:simple-grafana:,:simple-linux:|}{ .lg .middle } **${2:タイトル}**",
+            "",
+            "    ---",
+            "",
+            "    ${3:説明文}",
+            "",
+            "    [:octicons-arrow-right-24: ${4:続きはこちら}](${5:URL})",
+            "",
+            "-   ${6|:material-pencil-outline:,:material-book-open-outline:,:material-note-edit-outline:,:material-file-document-outline:,:material-account-outline:,:material-server-outline:,:material-cloud-outline:,:material-database-outline:,:material-code-tags:,:material-console:,:material-language-python:,:material-cog-outline:,:material-wrench-outline:,:material-tools:,:material-chart-line:,:material-chart-bar:,:material-monitor-dashboard:,:material-shield-outline:,:material-lock-outline:,:material-network-outline:,:material-rocket-launch-outline:,:material-alert-outline:,:material-magnify:,:material-home-outline:,:material-information-outline:,:material-puzzle-outline:,:material-tag-outline:,:material-layers-outline:,:simple-github:,:simple-docker:,:simple-kubernetes:,:simple-terraform:,:simple-amazonaws:,:simple-ansible:,:simple-prometheus:,:simple-grafana:,:simple-linux:|}{ .lg .middle } **${7:タイトル}**",
+            "",
+            "    ---",
+            "",
+            "    ${8:説明文}",
+            "",
+            "    [:octicons-arrow-right-24: ${9:続きはこちら}](${10:URL})",
+            "",
+            "</div>$0"
+        ],
+        "description": "グリッドカード（2枚構成、アイコンをドロップダウンで選択）"
+    },
+    "グリッドカード アイテム": {
+        "prefix": ["mk-grid-card-item", "カードアイテム"],
+        "scope": "markdown",
+        "body": [
+            "-   ${1|:material-pencil-outline:,:material-book-open-outline:,:material-note-edit-outline:,:material-file-document-outline:,:material-account-outline:,:material-server-outline:,:material-cloud-outline:,:material-database-outline:,:material-code-tags:,:material-console:,:material-language-python:,:material-cog-outline:,:material-wrench-outline:,:material-tools:,:material-chart-line:,:material-chart-bar:,:material-monitor-dashboard:,:material-shield-outline:,:material-lock-outline:,:material-network-outline:,:material-rocket-launch-outline:,:material-alert-outline:,:material-magnify:,:material-home-outline:,:material-information-outline:,:material-puzzle-outline:,:material-tag-outline:,:material-layers-outline:,:simple-github:,:simple-docker:,:simple-kubernetes:,:simple-terraform:,:simple-amazonaws:,:simple-ansible:,:simple-prometheus:,:simple-grafana:,:simple-linux:|}{ .lg .middle } **${2:タイトル}**",
+            "",
+            "    ---",
+            "",
+            "    ${3:説明文}",
+            "",
+            "    [:octicons-arrow-right-24: ${4:続きはこちら}](${5:URL})$0"
+        ],
+        "description": "グリッドカード 1アイテム（既存コンテナに追記用）"
     },
 
     // ========================================

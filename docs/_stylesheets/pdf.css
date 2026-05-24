@@ -71,4 +71,46 @@
   article h3 {
     border-bottom: none !important;
   }
+
+  /* グリッドカード: WeasyPrint の CSS Grid 未対応によるレイアウト崩れを防止 */
+  .md-typeset .grid.cards > :is(ul, ol) {
+    display: block !important;
+    columns: unset !important;
+  }
+
+  .md-typeset .grid.cards > :is(ul, ol) > li {
+    display: block !important;
+    transform: none !important;
+    transition: none !important;
+    margin-bottom: 0.8rem;
+    break-inside: avoid;
+  }
+
+  /* アイコン + タイトル行: WeasyPrint の flex 処理不備による重なりを修正 */
+  .md-typeset .grid.cards > :is(ul, ol) > li > p:first-child {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0 !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .md-typeset .grid.cards > :is(ul, ol) > li > p:first-child .twemoji {
+    flex-shrink: 0 !important;
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
+    /* WeasyPrint は gap 未対応のため margin-right で間隔を確保 */
+    margin-right: 1rem !important;
+  }
+
+  /* fill は build_config.py で base64 SVG を decode/re-encode して設定済み */
+  .md-typeset .grid.cards > :is(ul, ol) > li > p:first-child .twemoji svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* stretched link オーバーレイを除去（PDF では不要） */
+  .md-typeset .grid.cards > :is(ul, ol) > li > p:last-child a::after {
+    display: none !important;
+  }
 }

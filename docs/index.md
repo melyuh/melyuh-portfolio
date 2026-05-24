@@ -12,7 +12,7 @@
 
     日々の業務での効率化・自動化の備忘録や趣味の工作、日常の雑記など
 
-    [:octicons-arrow-right-24: ブログへ](blog/index.html)
+    [:octicons-arrow-right-24: ブログへ](blog/index.md)
 
 - :material-account-outline:{ .lg .middle } **プロフィール**
 
@@ -20,6 +20,6 @@
 
     経歴・スキル・使用ツールなど
 
-    [:octicons-arrow-right-24: プロフィールへ](profile/index.html)
+    [:octicons-arrow-right-24: プロフィールへ](profile/index.md)
 
 </div>

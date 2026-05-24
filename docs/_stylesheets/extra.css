@@ -290,6 +290,7 @@
    =================================================== */
 
 .md-typeset .grid.cards > :is(ul, ol) > li {
+  position: relative;
   background: var(--md-default-bg-color--light);
   border: 1px solid var(--md-default-fg-color--lightest);
   border-radius: 12px;
@@ -347,6 +348,13 @@
   font-weight: 600;
   color: var(--md-primary-fg-color) !important;
   text-decoration: none !important;
+}
+
+/* カード全体をリンク化（stretched link パターン） */
+.md-typeset .grid.cards > :is(ul, ol) > li > p:last-child a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
 }
 
 /* リンク行の矢印アイコン */

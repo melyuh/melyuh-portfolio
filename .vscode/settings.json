@@ -6,6 +6,7 @@
     "source.organizeImports": "always"
   },
   "audioCues.enabled": "off",
+  "editor.accessibilitySupport": "off",
 
   // cSpellの単語リスト（VSCodeの「辞書に追加」コマンドでここに追記される）
   "cSpell.words": [
