@@ -1,4 +1,5 @@
-site_name: Melyuh's Portfolio
+site_name: Sandbox　─ とりあえずやってみるブログ ─
+site_author: Melyuh
 # site_url: https://your-cloudfront-domain.cloudfront.net  # TODO: 実際のURLに変更
 copyright: "Melyuh. All rights reserved." #「Copyright (C) YYYY」が冒頭に付与される
 
@@ -22,7 +23,6 @@ theme:
     - navigation.sections         # セクション表示
     - navigation.expand           # 自動展開
     - navigation.indexes          # セクションインデックスページ
-    - navigation.path             # パンくずリスト
     - navigation.top              # トップに戻るボタン
     # Search
     - search.highlight            # 検索ハイライト
@@ -30,6 +30,7 @@ theme:
     # Content
     - content.code.copy           # コードコピーボタン
     - content.code.select         # コード選択機能
+    - content.grids               # グリッドカード
     - content.tooltips            # ツールチップ
   palette:
     - scheme: slate
@@ -126,8 +127,7 @@ plugins:
       archive_date_format: yyyy年
       categories: true
       authors: false
-  - tags:
-      tags_file: tags.md
+  - tags
   - table-reader:
       enabled: true
   - glightbox

@@ -126,13 +126,13 @@
 }
 
 .md-tabs__link:hover,
-.md-tabs__link--active {
+.md-tabs__item--active .md-tabs__link {
   color: var(--md-primary-fg-color) !important;
   opacity: 1;
 }
 
-.md-tabs__indicator {
-  background-color: var(--md-primary-fg-color);
+.md-tabs__item--active {
+  border-bottom: 2px solid var(--md-primary-fg-color);
 }
 
 /* ハンバーガーメニュー（モバイルドロワー）のロゴ背景をデフォルト背景色に統一 */
@@ -276,4 +276,151 @@
 /* ホバー時のハイライト */
 .md-typeset table:not([class]) tbody tr:hover {
   background-color: var(--md-accent-fg-color--transparent);
+}
+
+/* ===================================================
+    グリッドカード外観カスタマイズ
+    使い方: docs の任意の md ファイルで以下の記法が使えます
+      <div class="grid cards" markdown>
+      - :material-ICON:{ .lg .middle } **タイトル**
+          ---
+          説明文
+          [:octicons-arrow-right-24: リンクテキスト](URL)
+      </div>
+   =================================================== */
+
+.md-typeset .grid.cards > :is(ul, ol) > li {
+  background: var(--md-default-bg-color--light);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 12px;
+  padding: 1.4rem 1.6rem;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  border-color: var(--md-primary-fg-color);
+}
+
+/* 1行目: アイコン円 + タイトルを横並び */
+.md-typeset .grid.cards > :is(ul, ol) > li > p:first-child {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li > p:first-child .twemoji {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  background-color: var(--md-primary-fg-color);
+  border-radius: 50%;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li > p:first-child .twemoji svg {
+  width: 22px;
+  height: 22px;
+  fill: var(--md-primary-bg-color);
+}
+
+/* セパレーター */
+.md-typeset .grid.cards > :is(ul, ol) > li > hr {
+  margin: 0.8rem 0;
+}
+
+/* リンク行を下部に固定（flex アイテムとして） */
+.md-typeset .grid.cards > :is(ul, ol) > li > p:last-child {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li > p:last-child a {
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--md-primary-fg-color) !important;
+  text-decoration: none !important;
+}
+
+/* リンク行の矢印アイコン */
+.md-typeset .grid.cards > :is(ul, ol) > li > p:last-child .twemoji svg {
+  fill: var(--md-primary-fg-color);
+  vertical-align: middle;
+}
+
+/* ===================================================
+    ブログ一覧カード
+   =================================================== */
+
+.md-post--excerpt {
+  background: var(--md-default-bg-color--light);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  padding: 1.4rem 1.8rem 1.2rem;
+  margin-bottom: 1.5rem;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.md-post--excerpt:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  transform: translateY(-3px);
+}
+
+/* カード内タイトル (h2): 通常のh2装飾を除去 */
+.md-post__content h2 {
+  background-color: transparent;
+  border-left: none;
+  padding: 0;
+  margin-bottom: 0.4em;
+  font-size: 1.25em;
+}
+
+.md-post__content h2 a {
+  color: var(--md-default-h-color) !important;
+  text-decoration: none;
+}
+
+.md-post__content h2 a:hover {
+  color: var(--md-primary-fg-color) !important;
+}
+
+/* メタ情報（日付・カテゴリ・読書時間）を横並び */
+.md-post__header .md-meta__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.6rem;
+  font-size: 0.78em;
+  color: var(--md-default-fg-color--light);
+}
+
+/* 「続きを読む」ボタン */
+.md-post__action {
+  margin-top: 0.8rem;
+}
+
+.md-post__action a {
+  display: inline-block;
+  padding: 0.3em 1.2em;
+  border: 1.5px solid var(--md-primary-fg-color);
+  border-radius: 2em;
+  color: var(--md-primary-fg-color) !important;
+  font-size: 0.8em;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.md-post__action a:hover {
+  background-color: var(--md-primary-fg-color);
+  color: var(--md-primary-bg-color) !important;
 }

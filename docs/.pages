@@ -1,5 +1,5 @@
 nav:
-  - index.md
-  - profile
-  - blog
-  - tags.md
+
+- index.md
+- blog
+- profile

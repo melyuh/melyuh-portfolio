@@ -30,7 +30,7 @@ dev = [
 
 [tool.poe.tasks]
 lint-markdown = "pnpm exec markdownlint-cli2 --fix '**/*.md' '!node_modules/**' '!.venv/**'"
-format-markdown = "pnpm exec prettier --write '**/*.md' --ignore-path .gitignore"
+format-markdown = "pnpm exec prettier --write '**/*.md' --ignore-path .gitignore --ignore-path .prettierignore"
 check-markdown = [
     "lint-markdown",
     "format-markdown"

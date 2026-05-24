@@ -16,8 +16,7 @@
     "ghcr.io/devcontainers/features/node:1": {
       "version": "22",
       "pnpmVersion": "latest"
-    },
-    "ghcr.io/anthropics/devcontainer-features/claude-code:1": {}
+    }
   },
   "customizations": {
     "vscode": {
@@ -53,10 +52,11 @@
         "[python]": {
           "editor.defaultFormatter": "charliermarsh.ruff"
         },
-        // Markdownのフォーマッターは引き続きPrettier（美しさ担当）
+        // Markdown: 保存時の自動整形は無効（grid cards等の4スペースインデントが崩れるため）
+        // 手動フォーマットは Shift+Alt+F、一括整形は poe format-markdown で可能
         "[markdown]": {
           "editor.defaultFormatter": "esbenp.prettier-vscode",
-          "editor.formatOnSave": true,
+          "editor.formatOnSave": false,
           "editor.wordWrap": "on",
           "editor.quickSuggestions": {
             "comments": "sep",
@@ -88,14 +88,16 @@
       }
     }
   },
+  "initializeCommand": "mkdir -p ${localEnv:HOME}/.aws ${localEnv:HOME}/.claude ${localEnv:HOME}/.config/gh",
   "postCreateCommand": {
     "fix-permissions": "sudo chown -R vscode /usr/local/share/nvm && sudo chown -R vscode /home/vscode/.config/gh",
+    "install-claude-code": "npm install -g @anthropic-ai/claude-code",
     "setup": "bash .devcontainer/setup.sh"
   },
   "postStartCommand": {
-    "update-claude-code": "npm install -g @anthropic-ai/claude-code@latest --silent",
-    "update-pnpm": "npm install -g pnpm@latest --silent",
-    "update-uv": "curl -LsSf https://astral.sh/uv/install.sh | sudo env UV_INSTALL_DIR=/bin sh"
+    "update-claude-code": "npm install -g @anthropic-ai/claude-code@latest > /dev/null 2>&1 &",
+    "update-pnpm": "npm install -g pnpm@latest > /dev/null 2>&1 &",
+    "update-uv": "curl -LsSf https://astral.sh/uv/install.sh | sudo env UV_INSTALL_DIR=/bin sh > /dev/null 2>&1 &"
   },
   "remoteUser": "vscode",
   "mounts": [

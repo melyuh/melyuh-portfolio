@@ -1,32 +1,25 @@
-# Melyuh's Portfolio
+# ホーム
 
-SRE / インフラエンジニアとして、信頼性の高いシステム設計・運用に取り組んでいます。
+インフラエンジニアとして働いている筆者の **Sandbox** （砂場 兼 遊び場）です。
 
----
+「まずはやってみる」をモットーに、日々の業務での効率化・自動化の備忘録や趣味の工作、日常の雑記など、ジャンル問わずまとめています。
 
-## About Me
+<div class="grid cards" markdown>
 
-<!-- 一言で自分を表すキャッチコピーや強みの概要をここに書く -->
+- :material-pencil-outline:{ .lg .middle } **ブログ**
 
-| 項目         | 内容                                     |
-| ------------ | ---------------------------------------- |
-| **役割**     | SRE / インフラエンジニア                 |
-| **得意領域** | AWS・IaC (Terraform)・可観測性・障害対応 |
-| **キャリア** | [職歴を見る](profile/career.md)          |
+    ---
 
----
+    日々の業務での効率化・自動化の備忘録や趣味の工作、日常の雑記など
 
-## Skills Highlights
+    [:octicons-arrow-right-24: ブログへ](blog/index.html)
 
-- **Cloud**: AWS (EC2, ECS, RDS, CloudFront, S3 など)
-- **IaC**: Terraform
-- **Observability**: <!-- 使用ツールを記載 -->
-- **CI/CD**: <!-- 使用ツールを記載 -->
+- :material-account-outline:{ .lg .middle } **プロフィール**
 
----
+    ---
 
-## Latest Blog Posts
+    経歴・スキル・使用ツールなど
 
-<!-- 記事が増えたらここにリストアップする -->
+    [:octicons-arrow-right-24: プロフィールへ](profile/index.html)
 
-[Blog 一覧を見る →](blog/index.md)
+</div>
