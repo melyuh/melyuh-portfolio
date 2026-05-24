@@ -858,6 +858,12 @@ def on_post_page(output, page, config):
             else "rgba(0,0,0,0.54)"
         )
         _fix_source_file_icon_fill(pdf_article, icon_fill)
+        text_fill = (
+            "rgba(255,255,255,0.82)"
+            if _pdf_scheme_global == "slate"
+            else "rgba(0,0,0,0.87)"
+        )
+        _fix_inline_icon_fill(pdf_article, text_fill)
         grid_fill = "#1a1a1a" if _pdf_scheme_global == "slate" else "#ffffff"
         _fix_grid_card_icon_fill(pdf_article, grid_fill)
         arrow_fill = next(
@@ -878,8 +884,8 @@ def _pre_pdf_render(html_string: str) -> str:
     """WeasyPrint レンダリング直前に HTML を加工する。
 
     1. 画像リンクの href を除去してクリック不可にする
-    2. グリッドカードアイコンの fill を設定する
-       （to-pdf の fix_twemoji が SVG を base64 img に変換済みのため decode/re-encode する）
+    2. 全インラインアイコンにスキームの文字色を設定する（fix_twemoji 変換後）
+    3. グリッドカード固有アイコンで上書きする
 
     to-pdf の EventHookHandler.pre_pdf_render をインスタンス属性で上書きして差し込む。
     このタイミングは WeasyPrint 呼び出し前かつ html_path 保存前なので
@@ -894,11 +900,19 @@ def _pre_pdf_render(html_string: str) -> str:
         if a.find("img"):
             del a["href"]
 
-    # グリッドカードアイコン: fix_twemoji 変換後の base64 img の fill を設定
-    # この時点では SVG は base64 img に変換済みのため _fix_converted_twemoji_fill を使用
+    # 1. 全インラインアイコン（span.twemoji）にスキームの文字色を設定
+    text_fill = (
+        "rgba(255,255,255,0.82)"
+        if _pdf_scheme_global == "slate"
+        else "rgba(0,0,0,0.87)"
+    )
+    _fix_converted_inline_icon_fill(soup, text_fill)
+    log.info(f"pre_pdf_render: inline icon fill set to {text_fill}")
+    # 2. グリッドカードタイトルアイコンを上書き
     grid_fill = "#1a1a1a" if _pdf_scheme_global == "slate" else "#ffffff"
     _fix_converted_twemoji_fill(soup, grid_fill)
-    log.info(f"pre_pdf_render: grid card icon fill set to {grid_fill}")
+    log.info(f"pre_pdf_render: grid card title icon fill set to {grid_fill}")
+    # 3. グリッドカード矢印アイコンを上書き
     arrow_fill = next(
         (p["main"] for s, p, _ in _schemes_global if s == _pdf_scheme_global),
         "#26C6DA",
@@ -956,79 +970,95 @@ def _fix_grid_card_arrow_fill(article, fill_color: str):
         log.debug(f"_fix_grid_card_arrow_fill: no SVG found (fill={fill_color})")
 
 
-def _fix_converted_twemoji_fill(soup, fill_color: str) -> int:
-    """fix_twemoji 変換後の base64 SVG img タグの fill 色を変更する。
+def _fix_inline_icon_fill(article, fill_color: str):
+    """全インラインアイコン（span.twemoji svg）に fill を設定する。
 
-    to-pdf の fix_twemoji は `.twemoji svg` を base64 エンコードした
-    `<img class="converted-twemoji">` に変換する。この変換後は SVG 要素が
-    DOM に存在しないため、base64 データを decode → fill 書き換え → re-encode する。
-
-    span.twemoji.lg.middle 固有の img のみを対象とする。
+    グリッドカード固有のアイコンはこの後で上書きするため、先に呼び出す。
+    fix_twemoji 変換後は _fix_converted_inline_icon_fill を使用する。
     """
+    svg_count = 0
+    for span in article.find_all("span", class_="twemoji"):
+        for svg in span.find_all("svg"):
+            svg["fill"] = fill_color
+            for el in svg.find_all(["path", "polygon", "circle", "rect"]):
+                el["fill"] = fill_color
+            svg_count += 1
+    if svg_count:
+        log.info(
+            f"_fix_inline_icon_fill: {svg_count} SVG(s) updated → fill={fill_color}"
+        )
+    else:
+        log.debug(f"_fix_inline_icon_fill: no SVG found (fill={fill_color})")
+
+
+def _recolor_converted_spans(spans, fill_color: str, label: str = "") -> int:
+    """span 要素リスト内の fix_twemoji 変換後 base64 SVG img の fill を書き換える共通ヘルパー。"""
     import base64
     from bs4 import BeautifulSoup as _SVGSoup
 
     count = 0
     prefix = "data:image/svg+xml;charset=utf-8;base64,"
-    for span in soup.select("span.twemoji.lg.middle"):
+    for span in spans:
         for img in span.find_all("img", class_="converted-twemoji"):
             src = img.get("src", "")
             if not src.startswith(prefix):
                 continue
             try:
-                b64data = src[len(prefix) :]
-                svg_str = base64.b64decode(b64data).decode("utf-8")
+                svg_str = base64.b64decode(src[len(prefix) :]).decode("utf-8")
                 svg_soup = _SVGSoup(svg_str, "html.parser")
                 for svg_el in svg_soup.find_all("svg"):
                     svg_el["fill"] = fill_color
                     svg_el["style"] = f"fill: {fill_color};"
                     for el in svg_el.find_all(["path", "polygon", "circle", "rect"]):
                         el["fill"] = fill_color
-                new_svg_str = str(svg_soup)
-                new_b64 = base64.b64encode(new_svg_str.encode("utf-8")).decode("ascii")
-                img["src"] = prefix + new_b64
+                img["src"] = prefix + base64.b64encode(
+                    str(svg_soup).encode("utf-8")
+                ).decode("ascii")
                 count += 1
             except Exception as e:
-                log.warning(f"_fix_converted_twemoji_fill: {e}")
+                log.warning(f"_recolor_converted_spans ({label}): {e}")
+    return count
+
+
+def _fix_converted_inline_icon_fill(soup, fill_color: str) -> int:
+    """全インラインアイコン（span.twemoji）の base64 SVG img に fill を設定する。
+
+    グリッドカード固有のアイコンはこの後で上書きするため、先に呼び出す。
+    fix_twemoji 変換前は _fix_inline_icon_fill を使用する。
+    """
+    count = _recolor_converted_spans(
+        list(soup.find_all("span", class_="twemoji")), fill_color, "inline"
+    )
+    log.info(
+        f"_fix_converted_inline_icon_fill: {count} img(s) updated → fill={fill_color}"
+    )
+    return count
+
+
+def _fix_converted_twemoji_fill(soup, fill_color: str) -> int:
+    """グリッドカードタイトルアイコン（span.twemoji.lg.middle）の base64 SVG img に fill を設定する。
+
+    to-pdf の fix_twemoji は `.twemoji svg` を base64 の `<img class="converted-twemoji">` に変換する。
+    fix_twemoji 変換前は _fix_grid_card_icon_fill を使用する。
+    """
+    count = _recolor_converted_spans(
+        soup.select("span.twemoji.lg.middle"), fill_color, "title"
+    )
     log.info(f"_fix_converted_twemoji_fill: {count} img(s) updated → fill={fill_color}")
     return count
 
 
 def _fix_converted_arrow_fill(soup, fill_color: str) -> int:
-    """グリッドカードリンク行（p:last-child）の fix_twemoji 変換後 base64 SVG img の fill を設定する。
+    """グリッドカードリンク行（p:last-child）の base64 SVG img に fill を設定する。
 
     fix_twemoji 変換前は _fix_grid_card_arrow_fill を使用する。
     """
-    import base64
-    from bs4 import BeautifulSoup as _SVGSoup
-
-    count = 0
-    prefix = "data:image/svg+xml;charset=utf-8;base64,"
-    for p in soup.select(".grid.cards li > p:last-child"):
-        for span in p.find_all("span", class_="twemoji"):
-            for img in span.find_all("img", class_="converted-twemoji"):
-                src = img.get("src", "")
-                if not src.startswith(prefix):
-                    continue
-                try:
-                    b64data = src[len(prefix) :]
-                    svg_str = base64.b64decode(b64data).decode("utf-8")
-                    svg_soup = _SVGSoup(svg_str, "html.parser")
-                    for svg_el in svg_soup.find_all("svg"):
-                        svg_el["fill"] = fill_color
-                        svg_el["style"] = f"fill: {fill_color};"
-                        for el in svg_el.find_all(
-                            ["path", "polygon", "circle", "rect"]
-                        ):
-                            el["fill"] = fill_color
-                    new_svg_str = str(svg_soup)
-                    new_b64 = base64.b64encode(new_svg_str.encode("utf-8")).decode(
-                        "ascii"
-                    )
-                    img["src"] = prefix + new_b64
-                    count += 1
-                except Exception as e:
-                    log.warning(f"_fix_converted_arrow_fill: {e}")
+    spans = [
+        span
+        for p in soup.select(".grid.cards li > p:last-child")
+        for span in p.find_all("span", class_="twemoji")
+    ]
+    count = _recolor_converted_spans(spans, fill_color, "arrow")
     log.info(f"_fix_converted_arrow_fill: {count} img(s) updated → fill={fill_color}")
     return count
 
@@ -1374,14 +1404,19 @@ def _generate_both_pdfs(config):
     alt_fill = "rgba(0,0,0,0.54)" if primary == "slate" else "rgba(255,255,255,0.54)"
     alt_html = alt_html.replace(f"fill: {primary_fill}", f"fill: {alt_fill}")
 
-    # グリッドカードアイコン: 代替スキーム用に base64 SVG img の fill を変更
-    # _pdf_source.html は fix_twemoji 変換後の HTML のため _fix_converted_twemoji_fill を使用
+    # 代替スキーム用アイコン fill を設定（_pdf_source.html は fix_twemoji 変換後）
     from bs4 import BeautifulSoup as _BS
 
     alt_soup = _BS(alt_html, "html.parser")
+    # 1. 全インラインアイコンに代替スキームの文字色を設定
+    alt_text_fill = "rgba(255,255,255,0.82)" if alt == "slate" else "rgba(0,0,0,0.87)"
+    _fix_converted_inline_icon_fill(alt_soup, alt_text_fill)
+    log.info(f"Alternate PDF ({alt}): inline icon fill set to {alt_text_fill}")
+    # 2. グリッドカードタイトルアイコンを上書き
     grid_alt_fill = "#ffffff" if alt == "default" else "#1a1a1a"
     _fix_converted_twemoji_fill(alt_soup, grid_alt_fill)
-    log.info(f"Alternate PDF ({alt}): grid card icon fill set to {grid_alt_fill}")
+    log.info(f"Alternate PDF ({alt}): grid card title icon fill set to {grid_alt_fill}")
+    # 3. グリッドカード矢印アイコンを上書き
     arrow_alt_fill = next(
         (p["main"] for s, p, _ in _schemes_global if s == alt),
         "#00838F",
