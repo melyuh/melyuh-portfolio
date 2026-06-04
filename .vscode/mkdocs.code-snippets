@@ -420,6 +420,34 @@
     },
 
     // ========================================
+    //  マクロ（macros-utils）
+    // ========================================
+    "リンクカード": {
+        "prefix": ["mk-linkcard", "リンクカード"],
+        "scope": "markdown",
+        "body": [
+            "{{ link_card(url=\"${1:https://example.com}\") }}$0"
+        ],
+        "description": "リンクポストカード（link_card マクロ）"
+    },
+    "Gist コードブロック": {
+        "prefix": ["mk-gist-codeblock", "Gist"],
+        "scope": "markdown",
+        "body": [
+            "{{ gist_codeblock(gist_url=\"${1:https://gist.github.com/user/gist_id}\") }}$0"
+        ],
+        "description": "GitHub Gist をコードブロックとして埋め込む（gist_codeblock マクロ）"
+    },
+    "X/Twitter カード": {
+        "prefix": ["mk-x-twitter-card", "ツイート"],
+        "scope": "markdown",
+        "body": [
+            "{{ x_twitter_card(url=\"${1:https://x.com/user/status/123456789}\") }}$0"
+        ],
+        "description": "X（旧Twitter）ツイートを埋め込む（x_twitter_card マクロ）"
+    },
+
+    // ========================================
     //  ページ構造
     // ========================================
     "ページテンプレート": {

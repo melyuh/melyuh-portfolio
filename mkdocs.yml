@@ -59,11 +59,15 @@ extra_css:
   - _stylesheets/extra.css
   - _stylesheets/pdf.css
   - _stylesheets/glightbox.min.css
+  - _stylesheets/macros-utils/link-card.css
+  - _stylesheets/macros-utils/gist-cb.css
+  - _stylesheets/macros-utils/x-twitter-link-card.css
 
 extra_javascript:
   - _javascripts/mermaid.min.js
   - _javascripts/glightbox.min.js
   - _javascripts/pdf_scheme.js
+  - _javascripts/macros-utils/x-twitter-widget.js
 
 markdown_extensions:
   # --- 基本 ---
@@ -137,6 +141,8 @@ plugins:
       categories: true
       authors: false
   - tags
+  - macros:
+      module_name: macros
   - table-reader:
       enabled: true
   - glightbox

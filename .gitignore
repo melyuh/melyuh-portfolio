@@ -26,6 +26,8 @@ docs/_images/*_mermaid_*.png
 docs/_images/*_mermaid_*.svg
 docs/_javascripts/_mermaid_config.js
 docs/_stylesheets/_palette.css
+docs/stylesheets/
+docs/javascripts/
 
 # claude
 *.claude/
