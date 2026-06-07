@@ -18,7 +18,7 @@ def create_x_twitter_card(url: str) -> str:
     return f"""
     <div class="x-twitter-embed" data-url="{url}">
         <blockquote class="twitter-tweet">
-            <a href="{url}"></a>
+            <a href="{url}" target="_blank" rel="noopener noreferrer">{url}</a>
         </blockquote>
     </div>
     """
