@@ -78,8 +78,24 @@ def pre_pdf_render(
     soup = BeautifulSoup(html_string, "html.parser")
 
     for a in soup.find_all("a", href=True):
-        if a.find("img"):
+        # テキストを含まない純粋な画像リンクのみ href を除去する。
+        # テキスト+アイコンのリンク（グリッドカード等）は href を保持する。
+        if a.find("img") and not a.get_text(strip=True):
             del a["href"]
+
+    # カバータイトルの折り返し位置を「、」の直後に固定する
+    cover_article = soup.find("article", id="doc-cover")
+    if cover_article:
+        cover_h1 = cover_article.find("h1")
+        if cover_h1:
+            text = cover_h1.get_text()
+            if "、" in text and len(text) > 10:
+                before, after = text.split("、", 1)
+                cover_h1.clear()
+                cover_h1.append(before + "、")
+                cover_h1.append(soup.new_tag("br"))
+                cover_h1.append(after)
+                log.info("pre_pdf_render: inserted <br> after '、' in cover title")
 
     text_fill = (
         "rgba(255,255,255,0.82)" if pdf_scheme == "slate" else "rgba(0,0,0,0.87)"

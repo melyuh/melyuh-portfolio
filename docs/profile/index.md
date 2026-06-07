@@ -38,5 +38,10 @@
 
 ## リンク
 
-- [GitHub](https://github.com/melyuh)
-- [LinkedIn](https://www.linkedin.com/in/yuh-kobayashi-melyuh/)
+### GitHub
+
+{{ link_card(url="https://github.com/melyuh") }}
+
+### LinkedIn
+
+{{ link_card(url="https://www.linkedin.com/in/yuh-kobayashi-melyuh") }}
