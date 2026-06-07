@@ -80,11 +80,11 @@ def create_link_card(
     )
 
     return f"""
-<div class="custom-link-card" onclick="window.location='{clean}'" role="link" tabindex="0">
+<div class="custom-link-card" onclick="window.open('{clean}', '_blank', 'noopener,noreferrer')" role="link" tabindex="0">
     <div class="custom-link-card-content">
-        <div class="custom-link-card-title" aria-label="{final_title}">{final_title}</div>
+        <div class="custom-link-card-title">{final_title}</div>
         <div class="custom-link-card-description">{final_description}</div>
-        <a href="{clean}" class="custom-link-card-domain">{display_domain}</a>
+        <a href="{clean}" class="custom-link-card-domain" target="_blank" rel="noopener noreferrer">{display_domain}</a>
     </div>
     {image_html}
 </div>
