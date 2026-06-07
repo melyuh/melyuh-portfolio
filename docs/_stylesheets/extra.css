@@ -171,7 +171,6 @@
 
 .md-typeset h1 {
   color: var(--md-default-h-color);
-  font-size: 2.5em;
   font-weight: bold;
   border-bottom: 4px solid var(--md-primary-fg-color);
   padding-bottom: 0.3em;
@@ -431,4 +430,11 @@
 .md-post__action a:hover {
   background-color: var(--md-primary-fg-color);
   color: var(--md-primary-bg-color) !important;
+}
+
+.site-name-kanji {
+  font-size: 1.2em;
+  display: inline-block;
+  vertical-align: baseline;
+  margin: 0 0.25em;
 }
