@@ -20,8 +20,6 @@
   [class*="git-revision-date-localized-plugin"] {
     color: hsla(0,0%,100%,.54);
   }
-  /* 目次ページ: _toc.scss が article#doc-toc > h1 { color: rgba(0,0,0,.54) } を
-     specificity (0,1,2) で定義しているため !important で上書きする */
   article#doc-toc > h1,
   article#doc-toc li > a {
     color: hsla(0,0%,100%,.87) !important;
