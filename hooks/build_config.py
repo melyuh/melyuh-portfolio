@@ -22,6 +22,7 @@ log = logging.getLogger("mkdocs.hooks.build_config")
 _mermaid_dark_config: dict = {}
 _pdf_scheme_global: str = "default"
 _schemes_global: list = []  # (scheme_name, primary_palette, accent_palette) のリスト
+_blog_post_articles: list = []  # ナビゲーション外ブログ記事の PDF 注入用
 
 MATERIAL_COLORS = {
     "red": {
@@ -717,9 +718,14 @@ def on_config(config):
     log.info(f"PDF primary scheme: {pdf_scheme}")
 
     # モジュールレベル変数を更新（on_post_page / on_post_build で参照）
-    global _mermaid_dark_config, _pdf_scheme_global, _schemes_global
+    global \
+        _mermaid_dark_config, \
+        _pdf_scheme_global, \
+        _schemes_global, \
+        _blog_post_articles
     _pdf_scheme_global = pdf_scheme
     _schemes_global = schemes
+    _blog_post_articles = []  # watch モード再ビルド時にリセット
     _mermaid_dark_config = {
         "theme": "base",
         "themeVariables": _build_mermaid_theme_variables_dark(first_accent),
@@ -877,6 +883,27 @@ def on_post_page(output, page, config):
     # WeasyPrint が PDF をレンダリングする時点では透明 PNG が存在する。
     output = _fix_mermaid_pngs_for_page(output, page, config)
 
+    # ブログ記事ページは MkDocs nav に含まれないため to-pdf が PDF に取り込まない。
+    # on_post_page 時点で pdf-article が設定済みなので収集し、_pre_pdf_render で注入する。
+    if page.file.src_path.startswith("blog/posts/"):
+        try:
+            pdf_plugin = config["plugins"]["to-pdf"]
+            if pdf_plugin.enabled:
+                from mkdocs_to_pdf.utils.soup_util import clone_element
+
+                gen = pdf_plugin.generator
+                article = getattr(page, "pdf-article", None)
+                if article:
+                    page_path = gen._page_path_for_id(page)
+                    section = clone_element(article)
+                    section.name = "section"
+                    section["id"] = f"{page_path}:"
+                    section["data-url"] = f"/{page_path}"
+                    _blog_post_articles.append(str(section))
+                    log.info(f"on_post_page: blog post collected for PDF: {page_path}")
+        except Exception as e:
+            log.debug(f"on_post_page: blog post collection skipped: {e}")
+
     return output
 
 
@@ -919,6 +946,53 @@ def _pre_pdf_render(html_string: str) -> str:
     )
     _fix_converted_arrow_fill(soup, arrow_fill)
     log.info(f"pre_pdf_render: arrow icon fill set to {arrow_fill}")
+
+    # nav 外ブログ記事を PDF に注入し、目次エントリも追加する
+    # make_indexes が pre_pdf_render より先に実行されるため、目次の手動追加が必要
+    toc_ul = None
+    toc_article = soup.find("article", id="doc-toc")
+    if toc_article:
+        toc_ul = toc_article.find("ul")
+
+    for article_html in _blog_post_articles:
+        article_soup = BeautifulSoup(article_html, "html.parser")
+        section = article_soup.find(["section", "article"])
+        if not section:
+            continue
+
+        if soup.body:
+            soup.body.append(section)
+        log.info(f"pre_pdf_render: injected blog post {section.get('id', '')}")
+
+        if not toc_ul:
+            continue
+
+        # h1 を目次エントリとして追加（headerlink は to-pdf が除去済み）
+        h1 = section.find("h1")
+        if not (h1 and h1.get("id")):
+            continue
+
+        h1_li = soup.new_tag("li")
+        h1_a = soup.new_tag("a", href=f"#{h1['id']}")
+        h1_a.string = h1.get_text(strip=True)
+        h1_li.append(h1_a)
+
+        # h2 を第二レベルのエントリとして追加（toc_level=2 に合わせる）
+        h2_entries = section.find_all("h2")
+        if h2_entries:
+            h2_ul = soup.new_tag("ul")
+            for h2 in h2_entries:
+                if not h2.get("id"):
+                    continue
+                h2_li = soup.new_tag("li")
+                h2_a = soup.new_tag("a", href=f"#{h2['id']}")
+                h2_a.string = h2.get_text(strip=True)
+                h2_li.append(h2_a)
+                h2_ul.append(h2_li)
+            h1_li.append(h2_ul)
+
+        toc_ul.append(h1_li)
+        log.info(f"pre_pdf_render: added TOC entry '{h1.get_text(strip=True)[:40]}'")
 
     return str(soup)
 
