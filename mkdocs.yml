@@ -138,7 +138,7 @@ plugins:
       blog_dir: blog
       post_url_date_format: yyyy/MM
       post_date_format: long
-      archive_date_format: yyyy年
+      archive: false
       categories: true
       authors: false
   - tags
