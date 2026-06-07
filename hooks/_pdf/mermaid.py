@@ -1,0 +1,449 @@
+"""Mermaid テーマ変数・PNG 生成"""
+
+import logging
+import re
+import shutil
+from pathlib import Path
+
+from _pdf.palette import blend_black, rgba, text_on
+
+log = logging.getLogger("mkdocs.hooks.build_config")
+
+
+def build_mermaid_theme_variables(accent: dict) -> dict:
+    return {
+        "background": "transparent",
+        "titleColor": "#1a1a1a",
+        "primaryColor": accent["vlight"],
+        "primaryTextColor": text_on(accent["vlight"]),
+        "primaryBorderColor": accent["main"],
+        "secondaryColor": accent["vlight"],
+        "secondaryTextColor": text_on(accent["vlight"]),
+        "secondaryBorderColor": accent["main"],
+        "tertiaryColor": "#f5f5f5",
+        "tertiaryTextColor": "#1a1a1a",
+        "tertiaryBorderColor": "#bdbdbd",
+        "lineColor": accent["main"],
+        "arrowheadColor": accent["main"],
+        "mainBkg": accent["vlight"],
+        "nodeBorder": accent["main"],
+        "clusterBkg": accent["vlight"],
+        "clusterBorder": accent["main"],
+        "edgeLabelBackground": "#ffffff",
+        "actorBkg": accent["vlight"],
+        "actorBorder": accent["main"],
+        "actorTextColor": text_on(accent["vlight"]),
+        "actorLineColor": accent["light"],
+        "signalColor": accent["main"],
+        "signalTextColor": "#37474f",
+        "activationBkgColor": accent["light"],
+        "activationBorderColor": accent["main"],
+        "labelBoxBkgColor": "#ffffff",
+        "labelBoxBorderColor": accent["main"],
+        "labelTextColor": "#1a1a1a",
+        "loopTextColor": "#37474f",
+        "sequenceNumberColor": text_on(accent["main"]),
+        "noteBkgColor": "#fff9c4",
+        "noteTextColor": "#1a1a1a",
+        "noteBorderColor": accent["main"],
+        "sectionBkgColor": rgba(accent["main"], 0.08),
+        "sectionBkgColor2": rgba(accent["main"], 0.04),
+        "taskBkgColor": accent["main"],
+        "taskTextColor": text_on(accent["main"]),
+        "taskBorderColor": accent["dark"],
+        "activeTaskBkgColor": accent["light"],
+        "activeTaskBorderColor": accent["main"],
+        "doneTaskBkgColor": "#cfd8dc",
+        "doneTaskBorderColor": "#90a4ae",
+        "critBkgColor": "#ef5350",
+        "critBorderColor": "#c62828",
+        "todayLineColor": accent["main"],
+    }
+
+
+def build_mermaid_theme_variables_dark(accent: dict) -> dict:
+    node_bg = blend_black(accent["main"], 0.3)
+    border_color = accent["light"]
+    return {
+        "background": "transparent",
+        "titleColor": "#e0e0e0",
+        "primaryColor": node_bg,
+        "primaryTextColor": "#ffffff",
+        "primaryBorderColor": border_color,
+        "secondaryColor": blend_black(accent["main"], 0.4),
+        "secondaryTextColor": "#e0e0e0",
+        "secondaryBorderColor": border_color,
+        "tertiaryColor": "#424242",
+        "tertiaryTextColor": "#e0e0e0",
+        "tertiaryBorderColor": "#757575",
+        "lineColor": border_color,
+        "arrowheadColor": border_color,
+        "mainBkg": node_bg,
+        "nodeBorder": border_color,
+        "clusterBkg": "#2d2d2d",
+        "clusterBorder": border_color,
+        "edgeLabelBackground": "transparent",
+        "actorBkg": node_bg,
+        "actorBorder": border_color,
+        "actorTextColor": "#ffffff",
+        "actorLineColor": accent["main"],
+        "signalColor": border_color,
+        "signalTextColor": "#e0e0e0",
+        "activationBkgColor": blend_black(accent["main"], 0.5),
+        "activationBorderColor": border_color,
+        "labelBoxBkgColor": "#424242",
+        "labelBoxBorderColor": border_color,
+        "labelTextColor": "#e0e0e0",
+        "loopTextColor": "#e0e0e0",
+        "sequenceNumberColor": "#ffffff",
+        "noteBkgColor": "#4a4000",
+        "noteTextColor": "#e0e0e0",
+        "noteBorderColor": "#ffd600",
+        "sectionBkgColor": rgba(accent["main"], 0.25),
+        "sectionBkgColor2": rgba(accent["main"], 0.12),
+        "taskBkgColor": blend_black(accent["main"], 0.2),
+        "taskTextColor": "#ffffff",
+        "taskBorderColor": accent["main"],
+        "activeTaskBkgColor": accent["main"],
+        "activeTaskBorderColor": accent["light"],
+        "doneTaskBkgColor": "#37474f",
+        "doneTaskBorderColor": "#546e7a",
+        "critBkgColor": "#b71c1c",
+        "critBorderColor": "#ef5350",
+        "todayLineColor": border_color,
+    }
+
+
+def generate_mermaid_config_js(schemes: list, default_color: dict) -> str:
+    import json
+
+    first_accent = schemes[0][2] if schemes else default_color
+
+    vars_by_scheme = {}
+    for scheme, _primary, _accent in schemes:
+        if scheme == "slate":
+            vars_by_scheme[scheme] = build_mermaid_theme_variables_dark(first_accent)
+        else:
+            vars_by_scheme[scheme] = build_mermaid_theme_variables(first_accent)
+
+    if "default" not in vars_by_scheme and vars_by_scheme:
+        vars_by_scheme["default"] = next(iter(vars_by_scheme.values()))
+
+    vars_json = json.dumps(vars_by_scheme, ensure_ascii=False, indent=2)
+
+    return f"""/* Auto-generated by hooks/build_config.py — DO NOT EDIT */
+(function () {{
+  var THEME_VARS = {vars_json};
+
+  var _sources = [];
+  document.querySelectorAll("pre.mermaid").forEach(function (el) {{
+    _sources.push(el.textContent.trim());
+  }});
+
+  function getScheme() {{
+    return (document.body || document.documentElement)
+      .getAttribute("data-md-color-scheme") || "default";
+  }}
+
+  var _api;
+  Object.defineProperty(window, "mermaid", {{
+    configurable: true,
+    get: function () {{ return _api; }},
+    set: function (m) {{
+      if (m && typeof m.initialize === "function" && !m.__themed__) {{
+        var _orig = m.initialize.bind(m);
+        m.initialize = function (cfg) {{
+          cfg = cfg || {{}};
+          var myVars = THEME_VARS[getScheme()] || THEME_VARS["default"];
+          var out = Object.assign({{}}, cfg);
+          delete out.themeCSS;
+          out.theme          = "base";
+          out.flowchart      = Object.assign({{ htmlLabels: false }}, cfg.flowchart || {{}});
+          out.class          = Object.assign({{ htmlLabels: false }}, cfg.class     || {{}});
+          out.themeVariables = Object.assign({{}}, myVars, cfg.themeVariables || {{}});
+          return _orig(out);
+        }};
+        m.__themed__ = true;
+      }}
+      _api = m;
+      Object.defineProperty(window, "mermaid", {{
+        value: _api, writable: true, configurable: true, enumerable: true
+      }});
+    }}
+  }});
+
+  document.addEventListener("DOMContentLoaded", function () {{
+    if (!_sources.length) return;
+    new MutationObserver(function () {{
+      var m = window.mermaid;
+      if (!m || !m.initialize || !m.run) return;
+      var myVars = THEME_VARS[getScheme()] || THEME_VARS["default"];
+      m.initialize({{
+        startOnLoad: false, theme: "base",
+        flowchart: {{ htmlLabels: false }}, class: {{ htmlLabels: false }},
+        themeVariables: myVars
+      }});
+      var containers = Array.from(document.querySelectorAll(
+        "div.mermaid, code[data-mermaid-rerender]"
+      ));
+      if (!containers.length) return;
+      var newEls = [];
+      containers.forEach(function (container, i) {{
+        var src = _sources[i];
+        if (!src) return;
+        var newEl = document.createElement("code");
+        newEl.className = "mermaid";
+        newEl.textContent = src;
+        newEl.setAttribute("data-mermaid-rerender", i);
+        if (container.parentNode) {{
+          container.parentNode.replaceChild(newEl, container);
+          newEls.push(newEl);
+        }}
+      }});
+      if (newEls.length) {{
+        m.run({{ nodes: newEls }});
+      }}
+    }}).observe(document.body, {{
+      attributes: true, attributeFilter: ["data-md-color-scheme"]
+    }});
+  }});
+}})();
+"""
+
+
+def fix_mermaid_svgs(site_dir: str) -> None:
+    """on_post_build 用: mermaid SVG の background-color を transparent に修正する"""
+    images_dir = Path(site_dir) / "images"
+    if not images_dir.exists():
+        return
+    for svg_path in images_dir.glob("*_mermaid_*.svg"):
+        text = svg_path.read_text(encoding="utf-8")
+        fixed = re.sub(
+            r"background-color\s*:\s*white\b", "background-color: transparent", text
+        )
+        if fixed != text:
+            svg_path.write_text(fixed, encoding="utf-8")
+            log.info(f"mermaid SVG background fixed: {svg_path.name}")
+
+
+def generate_dark_svg(
+    mermaid_source: str, project_root: Path, mermaid_dark_config: dict
+) -> "str | None":
+    """mmdc を subprocess で実行してダークテーマの SVG を生成する。"""
+    import json
+    import subprocess
+    import tempfile
+    import time
+
+    mmdc = project_root / "node_modules" / ".bin" / "mmdc"
+    if not mmdc.exists():
+        log.warning(f"mmdc not found: {mmdc}")
+        return None
+
+    puppeteer_cfg = {"args": ["--no-sandbox", "--disable-setuid-sandbox"]}
+
+    for attempt in range(3):
+        if attempt > 0:
+            time.sleep(1.5)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            td = Path(tmpdir)
+            (td / "input.mmd").write_text(mermaid_source, encoding="utf-8")
+            (td / "config.json").write_text(
+                json.dumps(mermaid_dark_config), encoding="utf-8"
+            )
+            (td / "puppeteer.json").write_text(
+                json.dumps(puppeteer_cfg), encoding="utf-8"
+            )
+            result = subprocess.run(
+                [
+                    str(mmdc),
+                    "-i",
+                    str(td / "input.mmd"),
+                    "-o",
+                    str(td / "output.svg"),
+                    "--configFile",
+                    str(td / "config.json"),
+                    "--puppeteerConfigFile",
+                    str(td / "puppeteer.json"),
+                    "-b",
+                    "transparent",
+                ],
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=str(project_root),
+            )
+            if result.returncode == 0:
+                out = td / "output.svg"
+                if out.exists():
+                    return out.read_text(encoding="utf-8")
+            log.warning(
+                f"mmdc (dark) attempt {attempt + 1} failed: {result.stderr[:200]}"
+            )
+
+    return None
+
+
+def render_svg_to_png(browser, svg_content: str, png_path: Path) -> None:
+    """Playwright ブラウザで SVG → 透明背景 PNG に変換する"""
+    m = re.search(r'viewBox="0 0 ([\d.]+) ([\d.]+)"', svg_content)
+    vw = int(float(m.group(1))) + 20 if m else 800
+    vh = int(float(m.group(2))) + 20 if m else 600
+
+    html = (
+        '<html style="background:transparent;margin:0">'
+        '<body style="margin:0;background:transparent">'
+        f"{svg_content}</body></html>"
+    )
+    pw_page = browser.new_page(viewport={"width": vw, "height": vh})
+    pw_page.set_content(html)
+    bbox = pw_page.locator("svg").bounding_box()
+    pw_page.screenshot(
+        path=str(png_path),
+        clip=bbox if bbox else None,
+        full_page=bbox is None,
+        omit_background=True,
+    )
+    pw_page.close()
+
+
+def replace_mermaid_in_html(
+    html: str, orig_src: str, default_src: str, slate_src: str
+) -> str:
+    """<a href=X.png><img src=X.png></a> を light/dark の2スパンに差し替える"""
+    escaped = re.escape(orig_src)
+
+    def wrap(m: re.Match) -> str:
+        block = m.group(0)
+        return (
+            f'<span class="mermaid-default">{block.replace(orig_src, default_src)}</span>'
+            f'<span class="mermaid-slate">{block.replace(orig_src, slate_src)}</span>'
+        )
+
+    a_pattern = (
+        r"<a\s[^>]*?" + escaped + r"[^>]*?>"
+        r"<img\s[^>]*?" + escaped + r"[^>]*?>"
+        r"</a>"
+    )
+    result = re.sub(a_pattern, wrap, html)
+    if result != html:
+        return result
+
+    return re.sub(r"<img\s[^>]*?" + escaped + r"[^>]*?>", wrap, html)
+
+
+def fix_mermaid_pngs_for_page(
+    output: str,
+    page,
+    config: dict,
+    mermaid_dark_config: dict,
+    pdf_scheme: str,
+) -> str:
+    """on_post_page 用: mermaid PNG をライト/ダーク両モードで生成し HTML を修正する。"""
+    png_srcs = list(
+        dict.fromkeys(
+            re.findall(r'src=["\']?([^"\'>\s]*_mermaid_[^"\'>\s]*\.png)["\']?', output)
+        )
+    )
+    if not png_srcs:
+        return output
+
+    site_dir = Path(config["site_dir"])
+    docs_dir = Path(config["docs_dir"])
+    page_dir = (site_dir / page.file.dest_path).parent
+    project_root = docs_dir.parent
+
+    md_content = (docs_dir / page.file.src_path).read_text(encoding="utf-8")
+    md_stripped = re.sub(
+        r"````+[^\n]*\n.*?````+[^\n]*", "", md_content, flags=re.DOTALL
+    )
+    mermaid_blocks = re.findall(r"```mermaid\n(.*?)```", md_stripped, re.DOTALL)
+
+    png_info = []
+    for src in png_srcs:
+        png_path = (
+            (site_dir / src.lstrip("/"))
+            if src.startswith("/")
+            else (page_dir / src).resolve()
+        )
+        m = re.search(r"_mermaid_(\d+)_", str(png_path))
+        if not m:
+            continue
+        idx = int(m.group(1))
+        if not png_path.exists() or not png_path.with_suffix(".svg").exists():
+            continue
+        png_info.append((png_path, idx, src))
+
+    if not png_info:
+        return output
+
+    for png_path, idx, src in png_info:
+        svg_path = png_path.with_suffix(".svg")
+        text = svg_path.read_text(encoding="utf-8")
+        fixed = re.sub(
+            r"background-color\s*:\s*white\b", "background-color: transparent", text
+        )
+        if fixed != text:
+            svg_path.write_text(fixed, encoding="utf-8")
+
+    dark_svgs: dict = {}
+    for png_path, idx, src in png_info:
+        if idx >= len(mermaid_blocks):
+            continue
+        raw = generate_dark_svg(mermaid_blocks[idx], project_root, mermaid_dark_config)
+        if raw:
+            raw = re.sub(
+                r"background-color\s*:\s*white\b", "background-color: transparent", raw
+            )
+            dark_svgs[src] = raw
+
+    errors: list = []
+
+    def _render_all() -> None:
+        try:
+            from playwright.sync_api import sync_playwright
+
+            with sync_playwright() as p:
+                browser = p.chromium.launch()
+                for png_path, idx, src in png_info:
+                    stem = png_path.stem
+                    parent = png_path.parent
+                    default_path = parent / f"{stem}_default.png"
+                    slate_path = parent / f"{stem}_slate.png"
+
+                    light_svg = png_path.with_suffix(".svg").read_text(encoding="utf-8")
+                    render_svg_to_png(browser, light_svg, default_path)
+                    log.info(f"mermaid PNG (light): {default_path.name}")
+
+                    if src in dark_svgs:
+                        render_svg_to_png(browser, dark_svgs[src], slate_path)
+                        log.info(f"mermaid PNG (dark): {slate_path.name}")
+                    else:
+                        shutil.copy2(default_path, slate_path)
+                        log.warning(f"mermaid dark fallback (copy): {slate_path.name}")
+
+                    pdf_src = slate_path if pdf_scheme == "slate" else default_path
+                    shutil.copy2(pdf_src, png_path)
+
+                browser.close()
+        except Exception as e:
+            errors.append(str(e))
+
+    import threading
+
+    t = threading.Thread(target=_render_all)
+    t.start()
+    t.join(timeout=180)
+
+    if errors:
+        log.warning(f"mermaid PNG render skipped: {errors[0]}")
+        return output
+
+    modified = output
+    for png_path, idx, src in png_info:
+        stem = png_path.stem
+        default_src = src.replace(stem, f"{stem}_default")
+        slate_src = src.replace(stem, f"{stem}_slate")
+        modified = replace_mermaid_in_html(modified, src, default_src, slate_src)
+
+    return modified

@@ -2,6 +2,8 @@ site_name: Syntax Error な日常。
 site_author: Melyuh
 # site_url: https://your-cloudfront-domain.cloudfront.net  # TODO: 実際のURLに変更
 copyright: "Melyuh. All rights reserved." #「Copyright (C) YYYY」が冒頭に付与される
+repo_url: https://github.com/melyuh/melyuh-portfolio
+repo_name: melyuh/melyuh-portfolio
 
 use_directory_urls: false
 
