@@ -113,4 +113,26 @@
   .md-typeset .grid.cards > :is(ul, ol) > li > p:last-child a::after {
     display: none !important;
   }
+
+  /* リンクカード: ハードコード色をCSS変数で上書き */
+  .custom-link-card {
+    background: var(--md-default-bg-color) !important;
+    border-color: var(--md-default-fg-color--lightest) !important;
+    color: var(--md-default-fg-color) !important;
+  }
+  .custom-link-card-title {
+    color: var(--md-primary-fg-color) !important;
+  }
+  .custom-link-card-description {
+    color: var(--md-default-fg-color) !important;
+  }
+  .custom-link-card-domain {
+    color: var(--md-default-fg-color--light) !important;
+  }
+
+  /* X/Twitter カード: ハードコード色をCSS変数で上書き */
+  .twitter-tweet {
+    background-color: var(--md-default-bg-color) !important;
+    border-color: var(--md-default-fg-color--lightest) !important;
+  }
 }
