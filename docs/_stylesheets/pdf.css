@@ -135,4 +135,14 @@
     background-color: var(--md-default-bg-color) !important;
     border-color: var(--md-default-fg-color--lightest) !important;
   }
+
+  /* テーブル: 偶数行のストライプを除去し、背景を本文と統一 */
+  .md-typeset table:not([class]) tbody tr:nth-child(even) {
+    background-color: transparent !important;
+  }
+
+  /* テーブル行間線: to-pdf プラグインが td に設定する border-bottom を除去 */
+  .md-typeset table:not([class]) tbody td {
+    border-bottom: none !important;
+  }
 }

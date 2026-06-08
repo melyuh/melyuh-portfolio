@@ -57,6 +57,11 @@
 :root {
   /* サイドバーの幅を広げて項目の折り返しを防止 */
   --md-sidebar-width: 15rem; /* デフォルト 12.1rem から拡大 */
+  --h2-divider-color: rgba(0, 0, 0, 0.12);
+}
+
+[data-md-color-scheme="slate"] {
+  --h2-divider-color: rgba(255, 255, 255, 0.15);
 }
 
 /* --md-default-h-color は hooks/build_config.py で primary から自動生成 */
@@ -174,7 +179,7 @@
   font-weight: bold;
   border-bottom: 4px solid var(--md-primary-fg-color);
   padding-bottom: 0.3em;
-  margin-bottom: 1em;
+  margin-bottom: 2.0em;
   position: relative;
 }
 
@@ -186,8 +191,25 @@
   padding-top: 0.4em;
   padding-left: 0.7em;
   padding-bottom: 0.4em;
+  margin-top: 3.5em;
   margin-bottom: 1em;
   position: relative;
+}
+
+.md-typeset h2::before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -1.75em;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--h2-divider-color);
+}
+
+/* ブログ一覧カード内の h2 には区切り線を表示しない */
+.md-post__content h2::before {
+  display: none;
 }
 
 .md-typeset h3 {
@@ -197,6 +219,7 @@
   padding-top: 0.3em;
   padding-left: 0.5em;
   padding-bottom: 0.3em;
+  margin-top: 2.0em;
   margin-bottom: 1em;
 }
 
@@ -207,6 +230,7 @@
   padding-top: 0.2em;
   padding-left: 0.5em;
   padding-bottom: 0.2em;
+  margin-top: 1.5em;
   margin-bottom: 0.7em;
 }
 
@@ -238,6 +262,7 @@
   border: none;
   border-collapse: collapse;
   display: table;
+  font-size: 1.0em;
 }
 
 /* ヘッダー: 下線のみ */

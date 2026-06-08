@@ -906,6 +906,65 @@ wheels = [
 ]
 
 [[package]]
+name = "melyuh-portfolio"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "mkdocs" },
+    { name = "mkdocs-awesome-pages-plugin" },
+    { name = "mkdocs-git-authors-plugin" },
+    { name = "mkdocs-git-revision-date-localized-plugin" },
+    { name = "mkdocs-glightbox" },
+    { name = "mkdocs-macros-plugin" },
+    { name = "mkdocs-material", extra = ["imaging"] },
+    { name = "mkdocs-mermaid-to-svg" },
+    { name = "mkdocs-minify-plugin" },
+    { name = "mkdocs-svg-to-png" },
+    { name = "mkdocs-table-reader-plugin" },
+    { name = "mkdocs-to-pdf" },
+    { name = "playwright" },
+    { name = "weasyprint" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "mypy" },
+    { name = "poethepoet" },
+    { name = "pre-commit" },
+    { name = "ruff" },
+    { name = "types-pygments" },
+    { name = "types-requests" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-awesome-pages-plugin", specifier = ">=2.10.1" },
+    { name = "mkdocs-git-authors-plugin", specifier = ">=0.10.0" },
+    { name = "mkdocs-git-revision-date-localized-plugin", specifier = ">=1.5.1" },
+    { name = "mkdocs-glightbox", specifier = ">=0.5.2" },
+    { name = "mkdocs-macros-plugin", specifier = ">=1.3.7" },
+    { name = "mkdocs-material", extras = ["imaging"], specifier = ">=9.7.6" },
+    { name = "mkdocs-mermaid-to-svg", specifier = ">=1.3.0" },
+    { name = "mkdocs-minify-plugin", specifier = ">=0.8.0" },
+    { name = "mkdocs-svg-to-png", specifier = ">=1.1.1" },
+    { name = "mkdocs-table-reader-plugin", specifier = ">=3.1.0" },
+    { name = "mkdocs-to-pdf", specifier = ">=0.11.2" },
+    { name = "playwright", specifier = ">=1.59.0" },
+    { name = "weasyprint", specifier = ">=62.3" },
+]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "mypy", specifier = ">=2.1.0" },
+    { name = "poethepoet", specifier = ">=0.46.0" },
+    { name = "pre-commit", specifier = ">=4.6.0" },
+    { name = "ruff", specifier = ">=0.15.13" },
+    { name = "types-pygments", specifier = ">=2.18.0" },
+    { name = "types-requests", specifier = ">=2.32.0" },
+]
+
+[[package]]
 name = "mergedeep"
 version = "1.3.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1690,65 +1749,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/3b/f5/d501fcb67e450fd3fae9db06050420c0c6043758cfa8c30ba40278211265/poethepoet-0.46.0.tar.gz", hash = "sha256:daf8469031879ef59ef0b34fdba83574d65e41eb9186e20cd0f7c89ce479b030", size = 117276, upload-time = "2026-05-15T15:52:02.548Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/af/01/a9d6ea30351919298d3dc237172ae6a60ce0224ecaaee289b671ab979c13/poethepoet-0.46.0-py3-none-any.whl", hash = "sha256:dc6d770a14792d124abac9066c5a707876027d1878ac9ca26cf57e9b2a96dc89", size = 150581, upload-time = "2026-05-15T15:52:01.118Z" },
-]
-
-[[package]]
-name = "portfolio"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "mkdocs" },
-    { name = "mkdocs-awesome-pages-plugin" },
-    { name = "mkdocs-git-authors-plugin" },
-    { name = "mkdocs-git-revision-date-localized-plugin" },
-    { name = "mkdocs-glightbox" },
-    { name = "mkdocs-macros-plugin" },
-    { name = "mkdocs-material", extra = ["imaging"] },
-    { name = "mkdocs-mermaid-to-svg" },
-    { name = "mkdocs-minify-plugin" },
-    { name = "mkdocs-svg-to-png" },
-    { name = "mkdocs-table-reader-plugin" },
-    { name = "mkdocs-to-pdf" },
-    { name = "playwright" },
-    { name = "weasyprint" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "mypy" },
-    { name = "poethepoet" },
-    { name = "pre-commit" },
-    { name = "ruff" },
-    { name = "types-pygments" },
-    { name = "types-requests" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "mkdocs", specifier = ">=1.6.1" },
-    { name = "mkdocs-awesome-pages-plugin", specifier = ">=2.10.1" },
-    { name = "mkdocs-git-authors-plugin", specifier = ">=0.10.0" },
-    { name = "mkdocs-git-revision-date-localized-plugin", specifier = ">=1.5.1" },
-    { name = "mkdocs-glightbox", specifier = ">=0.5.2" },
-    { name = "mkdocs-macros-plugin", specifier = ">=1.3.7" },
-    { name = "mkdocs-material", extras = ["imaging"], specifier = ">=9.7.6" },
-    { name = "mkdocs-mermaid-to-svg", specifier = ">=1.3.0" },
-    { name = "mkdocs-minify-plugin", specifier = ">=0.8.0" },
-    { name = "mkdocs-svg-to-png", specifier = ">=1.1.1" },
-    { name = "mkdocs-table-reader-plugin", specifier = ">=3.1.0" },
-    { name = "mkdocs-to-pdf", specifier = ">=0.11.2" },
-    { name = "playwright", specifier = ">=1.59.0" },
-    { name = "weasyprint", specifier = ">=62.3" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "mypy", specifier = ">=2.1.0" },
-    { name = "poethepoet", specifier = ">=0.46.0" },
-    { name = "pre-commit", specifier = ">=4.6.0" },
-    { name = "ruff", specifier = ">=0.15.13" },
-    { name = "types-pygments", specifier = ">=2.18.0" },
-    { name = "types-requests", specifier = ">=2.32.0" },
 ]
 
 [[package]]

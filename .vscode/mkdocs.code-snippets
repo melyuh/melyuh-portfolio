@@ -157,7 +157,7 @@
         "prefix": ["mk-code", "コード"],
         "scope": "markdown",
         "body": [
-            "```${1|bash,shell,python,yaml,json,hcl,sql,typescript,go|}",
+            "```${1|bash,shell,python,yaml,json,toml,hcl,sql,javascript,typescript,go|}",
             "$2",
             "```$0"
         ],
@@ -167,7 +167,7 @@
         "prefix": ["mk-code-title", "コードタイトル"],
         "scope": "markdown",
         "body": [
-            "```${1|bash,shell,python,yaml,json,hcl,sql,typescript,go|} title=\"${2:filename}\"",
+            "```${1|bash,shell,python,yaml,json,toml,hcl,sql,javascript,typescript,go|} title=\"${2:filename}\"",
             "$3",
             "```$0"
         ],

@@ -30,6 +30,7 @@ theme:
     - search.highlight            # 検索ハイライト
     - search.suggest              # 検索サジェスト
     # Content
+    - content.code.annotate       # コードアノテーション
     - content.code.copy           # コードコピーボタン
     - content.code.select         # コード選択機能
     - content.grids               # グリッドカード
